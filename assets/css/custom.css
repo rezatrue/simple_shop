@@ -1,0 +1,19 @@
+/*
+Custom Css
+*/
+.page-item.active .page-link{
+    background-color: #69bb7e;
+}
+
+.map_parent {
+    display: flex;
+    justify-content: center; /* Centers horizontally */
+    align-items: center; /* Centers vertically */
+    height: 100vh; /* Optional: set height for vertical centering */
+}
+
+.map_child {
+    width: 100%; /* Set desired width */
+    height: 100%; /* Set desired height */
+}
+

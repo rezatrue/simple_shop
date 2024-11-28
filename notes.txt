@@ -1,0 +1,18 @@
+CREATE TABLE product_categories (
+    p_id INT,
+    cat_id INT,
+    PRIMARY KEY (p_id, cat_id),
+    FOREIGN KEY (p_id) REFERENCES products(p_id),
+    FOREIGN KEY (cat_id) REFERENCES categories(cat_id)
+);
+
+....
+-- Insert a product
+INSERT INTO products (product_name) VALUES ('Product A');
+
+-- Insert categories
+INSERT INTO categories (cat_name) VALUES ('Category 1'), ('Category 2');
+
+-- Link product to categories (assuming product_id = 1 and cat_ids = 1, 2)
+INSERT INTO product_categories (product_id, cat_id) VALUES (1, 1), (1, 2);
+
