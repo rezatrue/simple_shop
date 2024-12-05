@@ -504,6 +504,21 @@ class Database {
 
 // SQL query for admin
 
+public function addOderItem($o_id, $u_ip, $p_id, $o_unit, $p_size, $c_notes) {
+
+    $sql = "INSERT INTO order_table ( o_id,  o_date , u_ip ,  p_id ,  o_unit ,  p_size ,  c_notes ) 
+            VALUES ('" . $o_id . "', now() ,'" . $u_ip . "','". $p_id . "','". $o_unit . "','". $p_size . "','". $c_notes . "')";
+    $result = $this->query($sql);
+
+    if ($result) {    
+        return $o_id;
+    }else
+        return 0;
+}
+
+
+
+
     public function close() {
         if ($this->conn) {
             $this->conn->close();

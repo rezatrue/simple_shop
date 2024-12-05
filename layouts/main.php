@@ -31,7 +31,14 @@ https://templatemo.com/tm-559-zay-shop
 
 -->
 </head>
+<?php session_start(); // Start the session
 
+// Initialize cart if it doesn't exist
+if (!isset($_SESSION['cart'])) {
+    $_SESSION['cart'] = [];
+}
+
+?>
 <body>
     <?php include 'nav.php'; ?>
     <?php include($page_content); // Include the specific page content ?>

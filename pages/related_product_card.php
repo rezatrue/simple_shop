@@ -4,14 +4,22 @@
             <img class="card-img rounded-0 img-fluid" src="<?php echo htmlspecialchars($row['p_image']); ?>">
             <div class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
                 <ul class="list-unstyled">
-                    <li><a class="btn btn-success text-white" href="shop_single.php?id=<?php echo htmlspecialchars($row['p_id']); ?>"><i class="far fa-heart"></i></a></li>
-                    <li><a class="btn btn-success text-white mt-2" href="shop_single.php?id=<?php echo htmlspecialchars($row['p_id']); ?>"><i class="far fa-eye"></i></a></li>
-                    <li><a class="btn btn-success text-white mt-2" href="shop_single.php?id=<?php echo htmlspecialchars($row['p_id']); ?>"><i class="fas fa-cart-plus"></i></a></li>
+                    <li><a class="btn btn-success text-white" href="product_details.php?id=<?php echo htmlspecialchars($row['p_id']); ?>"><i class="far fa-heart"></i></a></li>
+                    <li><a class="btn btn-success text-white mt-2" href="product_details.php?id=<?php echo htmlspecialchars($row['p_id']); ?>"><i class="far fa-eye"></i></a></li>
+                    <form action="./data/manage_cart.php" method="POST">
+                        <input type="hidden" name="product-id" value="<?php echo $row['p_id']; ?>">
+                        <input type="hidden" name="product-title" value="<?php echo $row['p_name']; ?>">
+                        <input type="hidden" name="product-unit-price" value="<?php echo $row['p_price']; ?>">
+                        <input type="hidden" name="product-quanity" value="1">
+                        <input type="hidden" name="product-size" value="<?php echo htmlspecialchars($row['p_sizes']); ?>">
+                        <input type="hidden" name="product-image" value="<?php echo htmlspecialchars($row['p_image']); ?>">
+                        <button type="submit" name="submit" value="addtocard" class="btn btn-success text-white mt-2"><i class="fas fa-cart-plus"></i></button>
+                    </form>
                 </ul>
             </div>
         </div>
         <div class="card-body">
-            <a href="shop_single.php?id=<?php echo htmlspecialchars($row['p_id']); ?>" class="h3 text-decoration-none"><?php echo htmlspecialchars($row['p_name']); ?></a>
+            <a href="product_details.php?id=<?php echo htmlspecialchars($row['p_id']); ?>" class="h3 text-decoration-none"><?php echo htmlspecialchars($row['p_name']); ?></a>
             <ul class="w-100 list-unstyled d-flex justify-content-between mb-0">
                 <li><?php echo htmlspecialchars($row['p_sizes']); ?></li>
                 <li class="pt-2">

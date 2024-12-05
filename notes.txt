@@ -1,3 +1,5 @@
+Using_Xamp_v3.30(Php v 8.1.6)
+
 CREATE TABLE product_categories (
     p_id INT,
     cat_id INT,

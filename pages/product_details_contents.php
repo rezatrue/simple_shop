@@ -171,10 +171,11 @@ $db->close();
                             <h6>Specification:</h6>
                             <p><?php echo $product['p_specification']; ?></p>
 
-                            <form action="./data/order_product.php" method="POST">
+                            <form action="./data/manage_cart.php" method="POST">
                                 <input type="hidden" name="product-id" value="<?php echo $product['p_id']; ?>">
                                 <input type="hidden" name="product-title" value="<?php echo htmlspecialchars($product['p_name']); ?>">
                                 <input type="hidden" name="product-unit-price" value="<?php echo $product['p_price']; ?>">
+                                <input type="hidden" name="product-image" value="<?php echo $product['p_image']; ?>">
                                 <div class="row">
                                     <div class="col-auto">
                                         <ul class="list-inline pb-3">
