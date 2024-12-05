@@ -40,6 +40,7 @@
                                 <li class="list-inline-item"><span class="btn btn-success" id="btn-plus-<?php echo $id; ?>" onclick="changeQuantity(<?php echo $id; ?>, 1)">+</span></li>
                             </ul>
                             <p class="card-text"><strong>Size: </strong><?php echo htmlspecialchars($item['size']); ?></p>
+                            <input type="hidden" name="product-size" id="product-size-<?php echo $id; ?>" value="<?php echo htmlspecialchars($item['size']); ?>">
                             <p class="card-text">
                                 <small class="card-text">
                                     <textarea class="textinput" id="notes-<?php echo $id; ?>" name="notes" rows="2" placeholder="Write what you are looking for..."><?php echo htmlspecialchars($item['notes']); ?></textarea><br>
