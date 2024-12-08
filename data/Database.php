@@ -21,6 +21,12 @@ class Database {
         //echo console.log("Connected successfully");
     }
 
+    public function close() {
+        if ($this->conn) {
+            $this->conn->close();
+        }
+    }
+
     public function query($sql) {
         return $this->conn->query($sql);
     }
@@ -32,6 +38,30 @@ class Database {
     public function fetchAll($result) {
         return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
     }
+
+    private function isTextclean($text){
+        $codeLatters = ['`','!','@','#','$','%','^','&','*','_','+','-','=','/','?','<','>'];
+        return true;
+    }
+
+    public function login($user, $password) {
+        if(!$this->isTextclean($user))
+            return;
+        $sql = 'SELECT u_id, u_full_name, u_role FROM user WHERE u_name = "' .$user. '" AND u_password = "' .$password. '"' ;
+        $result = $this->fetchAll($this->query($sql));
+        // echo '<pre>';
+        // print_r($result);
+        // echo '<pre/>';
+        // exit();
+        if(!$result)
+            return null;
+        $user = [
+            'id' => $result[0]['u_id'],
+            'name' => $result[0]['u_full_name'],
+            'role' => $result[0]['u_role']
+        ];
+        return $user; 
+    }    
 
 
     public function queryCountForListPage() {
@@ -516,14 +546,108 @@ public function addOderItem($o_id, $u_ip, $p_id, $o_unit, $p_size, $c_notes) {
         return 0;
 }
 
+    public function queryForOrderListPage($page, $itemsPerPage) {
+        // SQL query to select data
+        $offset = ($page - 1) * $itemsPerPage ;
+        $sql = "SELECT 
+                    o.o_id,
+                    o.o_date,
+                    o.u_ip,
+                    SUM(o.o_unit * p.p_price) AS order_amount
+                FROM 
+                    order_table o
+                JOIN 
+                    products p ON o.p_id = p.p_id
+                GROUP BY 
+                    o.o_id, o.o_date
+                ORDER BY 
+                    o.o_date ASC
+                LIMIT " 
+                    .$itemsPerPage .
+                " OFFSET "
+                    . $offset; 
+                    
+        $result = $this->query($sql);
 
-
-
-    public function close() {
-        if ($this->conn) {
-            $this->conn->close();
+        $relatedOrderList['order'] = [];
+        if ($result) {
+            // Assuming $result is an associative array of rows
+            foreach ($result as $row) {
+                // Check if the product already exists in the array
+                if (isset($row['o_id'])) {
+                    // Store product name and price
+                    $relatedOrderList['order'][] = [
+                        'o_id' => $row['o_id'],
+                        'o_date' => $row['o_date'],
+                        'u_ip' => $row['u_ip'],
+                        'order_amount' => $row['order_amount']
+                    ];
+                }  
+            }
         }
+        // echo '<pre>';
+        // print_r($relatedOrderList);
+        // echo '<pre/>';
+        //exit();
+        return $relatedOrderList; 
     }
+
+    public function queryCountForOrderListPage() {
+        // SQL query to select data
+        $sql = "SELECT COUNT(DISTINCT o_id) AS total_count FROM order_table";
+        $result = $this->query($sql);
+        $row = mysqli_fetch_assoc($result);
+        $totalCount = (int)$row['total_count'];
+        return $totalCount;
+        // $totalItems = mysqli_num_rows($result);
+    }
+
+    public function orderDetails($o_id) {
+        // SQL query to select data
+        $sql = "SELECT 
+                o.p_id,
+                o.o_unit,
+                o.p_size,
+                o.c_notes,
+                p.p_name,
+                p.p_price,
+                (o.o_unit * p.p_price) AS total_amount
+            FROM 
+                order_table o
+            INNER JOIN 
+                products p ON o.p_id = p.p_id
+            WHERE
+                o.o_id = '" .$o_id . "'"; 
+                    
+        $result = $this->query($sql);
+
+        $orderDetails['item'] = [];
+        if ($result) {
+            // Assuming $result is an associative array of rows
+            foreach ($result as $row) {
+                // Check if the product already exists in the array
+                if (isset($row['p_id'])) {
+                    // Store product name and price
+                    $orderDetails['item'][] = [
+                        'p_id' => $row['p_id'],
+                        'o_unit' => $row['o_unit'],
+                        'p_size' => $row['p_size'],
+                        'c_notes' => $row['c_notes'],
+                        'p_name' => $row['p_name'],
+                        'p_price' => $row['p_price'],
+                        'total_amount' => $row['total_amount']
+                    ];
+                }  
+            }
+        }
+        // echo '<pre>';
+        // print_r($relatedOrderList);
+        // echo '<pre/>';
+        //exit();
+        return $orderDetails; 
+    }
+
+
 }
 
 ?>

@@ -1,3 +1,25 @@
+<?php
+
+// Check for messages and display them
+if (isset($_SESSION['message'])) {
+    echo "<div class='message'>" . $_SESSION['message'] . "</div>";
+    unset($_SESSION['message']); // Clear the message after displaying it
+}
+
+// Include the Database class
+require './data/Database.php'; // Adjust the path as necessary
+
+$productDetails = null;
+
+if (isset($_GET['id'])){
+	$productId = $_GET['id'];
+	$db = new Database();
+  $productDetails = $db->getProductDetails($productId);
+  $db->close();
+}
+
+?>
+
 <style>
   .dropdown-menu {
       border: 1px solid #ccc;
@@ -23,27 +45,6 @@
   }
 </style>
 
-<?php
-
-// Check for messages and display them
-if (isset($_SESSION['message'])) {
-    echo "<div class='message'>" . $_SESSION['message'] . "</div>";
-    unset($_SESSION['message']); // Clear the message after displaying it
-}
-
-// Include the Database class
-require './data/Database.php'; // Adjust the path as necessary
-
-$productDetails = null;
-
-if (isset($_GET['id'])){
-	$productId = $_GET['id'];
-	$db = new Database();
-  $productDetails = $db->getProductDetails($productId);
-  $db->close();
-}
-
-?>
 
 <!-- general form elements -->
 <div class="card card-primary">
