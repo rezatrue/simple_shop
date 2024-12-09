@@ -110,11 +110,11 @@ $itemsPerPage = 6; // Items per page
                     $db = new Database();
 
                     if(isset($_GET['cat'])){                       
-                        $result = $db->queryForRelatedProduct($cat_id, $page, $itemsPerPage);
-                        $totalItems = $db->productCountForCat($cat_id); 
+                        $result = $db->queryForRelatedProduct('visitor', $cat_id, $page, $itemsPerPage);
+                        $totalItems = $db->productCountForCat('visitor', $cat_id); 
                     }else{
-                        $result = $db->queryForListPage($page, $itemsPerPage);
-                        $totalItems = $db->queryCountForListPage();
+                        $result = $db->queryForListPage('visitor', $page, $itemsPerPage);
+                        $totalItems = $db->queryCountForListPage('visitor');
                     }
 
                     if (!empty($result['product'])) {

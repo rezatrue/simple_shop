@@ -64,9 +64,12 @@ class Database {
     }    
 
 
-    public function queryCountForListPage() {
+    public function queryCountForListPage($user) {
         // SQL query to select data
-        $sql = "SELECT COUNT(*) AS total_count FROM products";
+        if($user === 'admin')
+            $sql = "SELECT COUNT(*) AS total_count FROM products"; 
+        else
+            $sql = "SELECT COUNT(*) AS total_count FROM products WHERE p_is_show = True"; // visitor will only see which is for dispaly
         $result = $this->query($sql);
         $row = mysqli_fetch_assoc($result);
         $totalCount = (int)$row['total_count'];
@@ -75,9 +78,22 @@ class Database {
     }
 
     // Nmae changed previous one was queryCountFor(
-    public function productCountForCat($cat_id) {
+    public function productCountForCat($user, $cat_id) {
         // SQL query to select data
-        $sql = "SELECT COUNT(*) as total_count FROM product_categories where cat_id = " . $cat_id ;
+        if($user === 'admin')
+            $sql = "SELECT COUNT(*) as total_count FROM product_categories where cat_id = " . $cat_id ;
+        else
+            $sql = "SELECT 
+                COUNT(*) as total_count 
+            FROM 
+                product_categories pc
+            JOIN 
+                products p ON pc.p_id = p.p_id
+            where 
+                pc.cat_id = " . $cat_id . " 
+            And
+                p.p_is_show = True";
+
         $result = $this->query($sql);
         $row = mysqli_fetch_assoc($result);
         $totalCount = (int)$row['total_count'];
@@ -85,10 +101,13 @@ class Database {
     }
 
 
-    public function queryForListPage($page, $itemsPerPage) {
+    public function queryForListPage($user, $page, $itemsPerPage) {
         // SQL query to select data
         $offset = ($page - 1) * $itemsPerPage ;
-        $sql = "SELECT * FROM products LIMIT " .$itemsPerPage ." OFFSET ". $offset;
+        if($user === 'admin')
+            $sql = "SELECT * FROM products LIMIT " .$itemsPerPage ." OFFSET ". $offset;
+        else
+            $sql = "SELECT * FROM products WHERE p_is_show = True LIMIT " .$itemsPerPage ." OFFSET ". $offset;
         $result = $this->query($sql);
 
         $relatedProductList['product'] = [];
@@ -129,23 +148,41 @@ class Database {
     }*/
 
     // repalce for "public function queryFor("
-    public function queryForRelatedProduct($cat_id, $page, $itemsPerPage) {
+    public function queryForRelatedProduct($user, $cat_id, $page, $itemsPerPage) {
         // SQL query to select data
         $offset = ($page - 1) * $itemsPerPage ;
-        //echo $sql;
-        $sql = "SELECT 
-            p.p_id, p.p_name, p.p_image, p.p_price, p.p_sizes
-        FROM 
-            products p
-        JOIN 
-            product_categories pc ON p.p_id = pc.p_id   
-        WHERE 
-            pc.cat_id = " . $cat_id .
-        " LIMIT "
-            . $itemsPerPage .
-        " OFFSET "
-            . $offset;
-        //echo $sql;
+
+        if($user === 'admin'){
+            $sql = "SELECT 
+                p.p_id, p.p_name, p.p_image, p.p_price, p.p_sizes
+            FROM 
+                products p
+            JOIN 
+                product_categories pc ON p.p_id = pc.p_id   
+            WHERE 
+                pc.cat_id = " . $cat_id .
+            " LIMIT "
+                . $itemsPerPage .
+            " OFFSET "
+                . $offset;
+        }else{
+            $sql = "SELECT 
+                p.p_id, p.p_name, p.p_image, p.p_price, p.p_sizes
+            FROM 
+                products p
+            JOIN 
+                product_categories pc ON p.p_id = pc.p_id   
+            WHERE 
+                pc.cat_id = " . $cat_id . "
+            AND
+                p.p_is_show = true     
+            LIMIT "
+                . $itemsPerPage .
+            " OFFSET "
+                . $offset;
+        }
+        
+        
         $result = $this->query($sql);
 
         $relatedProductList['product'] = [];
