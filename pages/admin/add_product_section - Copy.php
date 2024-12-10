@@ -1,3 +1,25 @@
+<?php
+
+// Check for messages and display them
+if (isset($_SESSION['message'])) {
+    echo "<div class='message'>" . $_SESSION['message'] . "</div>";
+    unset($_SESSION['message']); // Clear the message after displaying it
+}
+
+// Include the Database class
+require './data/Database.php'; // Adjust the path as necessary
+
+$productDetails = null;
+
+if (isset($_GET['id'])){
+	$productId = $_GET['id'];
+	$db = new Database();
+  $productDetails = $db->getProductDetails($productId);
+  $db->close();
+}
+
+?>
+
 <style>
   .dropdown-menu {
       border: 1px solid #ccc;
@@ -21,52 +43,7 @@
       background-color:powderblue;
       text-transform: capitalize;
   }
-
-.custom-image {
-      position: relative;
-      display: inline-block;
-  }
-  .remove-image {
-      position: absolute;
-      top: 0;
-      right: 0;
-      background-color: red;
-      color: white;
-      border: none;
-      cursor: pointer;
-      border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      display: none; /* Initially hidden */
-  }
-  .image-preview {
-      max-width: 150px; 
-      max-height: 150px; 
-  }
 </style>
-
-
-<?php
-
-// Check for messages and display them
-if (isset($_SESSION['message'])) {
-    echo "<div class='message'>" . $_SESSION['message'] . "</div>";
-    unset($_SESSION['message']); // Clear the message after displaying it
-}
-
-// Include the Database class
-require './data/Database.php'; // Adjust the path as necessary
-
-$productDetails = null;
-
-if (isset($_GET['id'])){
-	$productId = $_GET['id'];
-	$db = new Database();
-  $productDetails = $db->getProductDetails($productId);
-  $db->close();
-}
-
-?>
 
 
 <!-- general form elements -->
@@ -91,17 +68,15 @@ if (isset($_GET['id'])){
       <div class="col-12 col-sm-6">
         <div class="form-group">
             <label for="exampleInputFile">Category image</label>
-              <!-- -->
-              <div class="row">
-                
-                <?php
-                  for ($x = 1; $x <= 9; $x++) {
-                    include('product_images.php');
-                  }
-                ?>
-
-              </div>
-              <!-- -->
+            <div class="custom-image">
+                <div id="preview" style="padding-bottom: 10px;">
+                  <?php if($productDetails != null && $productDetails['p_image'] != null) echo '<img src='. $productDetails['p_image'] .' alt="Image Preview" style="max-width: 300px; max-height: 300px;" />' ; ?>
+                </div>
+            </div>    
+            <div class="custom-file">
+              <input type="file" class="custom-file-input" id="customFile" name="CategoryImage" accept=".jpg, .jpeg, .png, .gif">
+              <label class="custom-file-label" for="customFile">Choose file</label>
+            </div>
         </div>
       </div>
       <div class="col-12 col-sm-6">
