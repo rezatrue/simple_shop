@@ -1,5 +1,8 @@
 <div class="card mb-3">
-    <img class="card-img img-fluid" src="<?php echo htmlspecialchars($product['p_image']); ?>" alt="Card image cap" id="product-detail">
+    <img class="card-img img-fluid" 
+        src="<?php 
+            if(sizeof($images) > 0) echo $images[0];
+            else echo 'assets/img/cat/dumy.png'; ?>" alt="Card image cap" id="product-detail">
 </div>
 <div class="row">
     <!--Start Controls-->
@@ -14,72 +17,115 @@
     <div id="multi-item-example" class="col-10 carousel slide carousel-multi-item" data-bs-ride="carousel">
         <!--Start Slides-->
         <div class="carousel-inner product-links-wap" role="listbox">
+            <?php
+                $fast = 0;
+                $second = 0;
+                $third = 0; 
+                $num = sizeof($images);
+                if($num > 0) {
+                    if($num > 2){
+                        $fast = 3;
+                        $num =  $num - 3;
+                    }else{
+                        $fast = $num;
+                        $num = 0;
+                    }
+                    if($num > 2){
+                        $second = 3;
+                        $num =  $num - 3;
+                    }else{
+                        $second = $num;
+                        $num = 0;
+                    }
+                    if($num > 0){
+                        $third = $num;
+                        $num = 0;
+                    }
+                }
 
-            <!--First slide-->
-            <div class="carousel-item active">
-                <div class="row">
-                    <div class="col-4">
-                        <a href="#">
-                            <img class="card-img img-fluid" src="assets/img/product_single_01.jpg" alt="Product Image 1">
-                        </a>
-                    </div>
-                    <div class="col-4">
-                        <a href="#">
-                            <img class="card-img img-fluid" src="assets/img/product_single_02.jpg" alt="Product Image 2">
-                        </a>
-                    </div>
-                    <div class="col-4">
-                        <a href="#">
-                            <img class="card-img img-fluid" src="assets/img/product_single_03.jpg" alt="Product Image 3">
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <!--/.First slide-->
-
-            <!--Second slide-->
-            <div class="carousel-item">
-                <div class="row">
-                    <div class="col-4">
-                        <a href="#">
-                            <img class="card-img img-fluid" src="assets/img/product_single_04.jpg" alt="Product Image 4">
-                        </a>
-                    </div>
-                    <div class="col-4">
-                        <a href="#">
-                            <img class="card-img img-fluid" src="assets/img/product_single_05.jpg" alt="Product Image 5">
-                        </a>
-                    </div>
-                    <div class="col-4">
-                        <a href="#">
-                            <img class="card-img img-fluid" src="assets/img/product_single_06.jpg" alt="Product Image 6">
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <!--/.Second slide-->
-
-            <!--Third slide-->
-            <div class="carousel-item">
-                <div class="row">
-                    <div class="col-4">
-                        <a href="#">
-                            <img class="card-img img-fluid" src="assets/img/product_single_07.jpg" alt="Product Image 7">
-                        </a>
-                    </div>
-                    <div class="col-4">
-                        <a href="#">
-                            <img class="card-img img-fluid" src="assets/img/product_single_08.jpg" alt="Product Image 8">
-                        </a>
-                    </div>
-                    <div class="col-4">
-                        <a href="#">
-                            <img class="card-img img-fluid" src="assets/img/product_single_09.jpg" alt="Product Image 9">
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <!--/.Third slide-->
+                if($fast > 0){
+                    echo '<div class="carousel-item active">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <a href="#">
+                                            <img class="card-img img-fluid" src="' . $images[0] . '" alt="Product Image 1">
+                                        </a>
+                                    </div>';
+                }
+                if($fast > 1){
+                    echo '<div class="col-4">
+                            <a href="#">
+                                <img class="card-img img-fluid" src="' . $images[1] . '" alt="Product Image 2">
+                            </a>
+                        </div>  ';
+                }
+                if($fast > 2){
+                    echo '<div class="col-4">
+                            <a href="#">
+                                <img class="card-img img-fluid" src="'. $images[2] . '" alt="Product Image 3">
+                            </a>
+                        </div>';
+                }
+                if($fast > 0){
+                    echo '</div>
+                    </div>';
+                }
+                if($second > 0){
+                    echo '<div class="carousel-item">
+                            <div class="row">
+                                <div class="col-4">
+                                    <a href="#">
+                                        <img class="card-img img-fluid" src="' . $images[3] . '" alt="Product Image 4">
+                                    </a>
+                                </div>';
+                }
+                if($second > 1){
+                    echo '<div class="col-4">
+                                <a href="#">
+                                    <img class="card-img img-fluid" src="' . $images[4] . '" alt="Product Image 5">
+                                </a>
+                            </div>';
+                }
+                if($second > 2){
+                    echo '<div class="col-4">
+                            <a href="#">
+                                <img class="card-img img-fluid" src="' . $images[5] . '" alt="Product Image 6">
+                            </a>
+                        </div>';
+                }
+                if($second > 0){
+                    echo '</div>
+                    </div>';
+                }  
+                
+                if($third > 0){
+                    echo '<div class="carousel-item">
+                            <div class="row">
+                                <div class="col-4">
+                                    <a href="#">
+                                        <img class="card-img img-fluid" src="' . $images[6] . '" alt="Product Image 7">
+                                    </a>
+                                </div>';
+                }
+                if($third > 1){
+                    echo '<div class="col-4">
+                                <a href="#">
+                                    <img class="card-img img-fluid" src="' . $images[7] . '" alt="Product Image 8">
+                                </a>
+                            </div>';
+                }
+                if($third > 2){
+                    echo '<div class="col-4">
+                            <a href="#">
+                                <img class="card-img img-fluid" src="' . $images[8] . '" alt="Product Image 9">
+                            </a>
+                        </div>';
+                }
+                if($third > 0){
+                    echo '</div>
+                    </div>';
+                }  
+                ?>
         </div>
         <!--End Slides-->
     </div>

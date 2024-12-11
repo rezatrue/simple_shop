@@ -154,7 +154,7 @@ class Database {
 
         if($user === 'admin'){
             $sql = "SELECT 
-                p.p_id, p.p_name, p.p_images, p.p_price, p.p_sizes
+                p.p_id, p.p_name, p.p_image, p.p_price, p.p_sizes
             FROM 
                 products p
             JOIN 
@@ -167,7 +167,7 @@ class Database {
                 . $offset;
         }else{
             $sql = "SELECT 
-                p.p_id, p.p_name, p.p_images, p.p_price, p.p_sizes
+                p.p_id, p.p_name, p.p_image, p.p_price, p.p_sizes
             FROM 
                 products p
             JOIN 
@@ -195,7 +195,7 @@ class Database {
                     $relatedProductList['product'][] = [
                         'p_id' => $row['p_id'],
                         'p_name' => $row['p_name'],
-                        'p_images' => json_decode($row['p_images'], true),
+                        'p_image' => $row['p_image'],
                         'p_price' => $row['p_price'],
                         'p_sizes' => $row['p_sizes']
                     ];
@@ -250,7 +250,7 @@ class Database {
                     // Store product name and price
                     $productDetails['p_id'] = $row['p_id'];
                     $productDetails['p_name'] = $row['p_name'];
-                    $productDetails['p_images'] = json_decode($row['p_images'], true);
+                    $productDetails['p_image'] = $row['p_image'];
                     $productDetails['p_price'] = $row['p_price'];
                     $productDetails['p_sizes'] = $row['p_sizes'];
                     $productDetails['p_is_show'] = $row['p_is_show'];

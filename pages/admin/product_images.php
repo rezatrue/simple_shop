@@ -1,7 +1,7 @@
 <div class="col-12 col-sm-4">
     <div class="custom-image">
-        <img src="assets/img/cat/dumy.png" alt="Image Preview" class="image-preview" id="preview-image-<?php echo $x; ?>" />
-        <button class="remove-image" type="button" id="remove-image-btn-<?php echo $x; ?>" >✖</button>
+        <img src="<?php if(!empty($productDetails['p_images'][$x-1])) echo htmlspecialchars($productDetails['p_images'][$x-1]); else echo 'assets/img/cat/dumy.png'; ?>" alt="Image Preview" class="image-preview" id="preview-image-<?php echo $x; ?>" />
+        <button class="remove-image" type="button" id="remove-image-btn-<?php echo $x; ?>" style="<?php if(!empty($productDetails['p_images'][$x-1])) echo 'display:block;'; else echo 'display:none;'; ?>">✖</button>
         <input type="file" class="custom-file-input" id="image-input-<?php echo $x; ?>" name="image-<?php echo $x; ?>" accept=".jpg, .jpeg, .png, .gif" style="display:none;">
     </div>
 </div>

@@ -1,7 +1,7 @@
 <?php
 // Include the Database class
 require 'Database.php'; // Adjust the path as necessary
-require 'Image_resize.php';
+require 'Image.php';
 
 session_start(); // Start the session
 
@@ -140,8 +140,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 // resize image resulation
     // if($uploadOk == 1){
-    //     $img_resize = new Image_resize();
-    //     $img_resize->resize(800, 800, $target_file);
+    //     $img = new Image();
+    //     $img->resize(800, 800, $target_file);
     // }
 
    

@@ -35,7 +35,15 @@ $db->close();
         <div class="container pb-5">
             <div class="row">
                 <div class="col-lg-5 mt-5">
-                    <?php include('product_images_carousel.php'); ?>
+                    <?php
+                        $images = [];
+                        foreach($product['p_images'] as $img){
+                            if($img != null){
+                                $images[] = $img;
+                            }
+                        }   
+                        include('product_images_carousel.php'); 
+                        ?>
                 </div>
                 <!-- col end -->
                 <div class="col-lg-7 mt-5">
@@ -78,7 +86,7 @@ $db->close();
                                 <input type="hidden" name="product-id" value="<?php echo $product['p_id']; ?>">
                                 <input type="hidden" name="product-title" value="<?php echo htmlspecialchars($product['p_name']); ?>">
                                 <input type="hidden" name="product-unit-price" value="<?php echo $product['p_price']; ?>">
-                                <input type="hidden" name="product-image" value="<?php echo $product['p_image']; ?>">
+                                <input type="hidden" name="product-image" value="<?php echo $product['p_images'][0]; ?>">
                                 <div class="row">
                                     <div class="col-auto">
                                         <ul class="list-inline pb-3">
