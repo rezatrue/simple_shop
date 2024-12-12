@@ -8,6 +8,10 @@ if (isset($_GET['id']))
 $db = new Database();
 $product  = $db->getProductDetails($id);
 // Close the database connection
+// echo '<pre>';
+// print_r($product);
+// echo '</pre>';
+// exit();
 $db->close(); 
 
 ?>
@@ -37,11 +41,13 @@ $db->close();
                 <div class="col-lg-5 mt-5">
                     <?php
                         $images = [];
-                        foreach($product['p_images'] as $img){
-                            if($img != null){
-                                $images[] = $img;
-                            }
-                        }   
+                        if($product['p_images']){
+                            foreach($product['p_images'] as $img){
+                                if($img != null){
+                                    $images[] = $img;
+                                }
+                            } 
+                        }
                         include('product_images_carousel.php'); 
                         ?>
                 </div>

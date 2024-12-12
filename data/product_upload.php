@@ -30,7 +30,6 @@ if (!is_dir($target_dir)) {
     }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
     // collect all data form the post request
         if (isset($_POST['ProductName']) && $_POST['ProductName'] != null)
             $productName = $_POST['ProductName'];
@@ -63,23 +62,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (isset($_POST['id']))
             $productId = $_POST['id']; // if not null then we have to update category (not add as new)
 
-        $uploadOk = 1;
-
         // insert / add new category in the table(DB) without image & get image cat id
         // generate a image name for the cat image with id ex: prod_img_id
         // insert the image path in the table(DB)
-        if($uploadOk == 1){
-            if($productId == null){
-                $db = new Database();
-                $prod_id = $db->addToProduct($productName, null, $productPrice, $productSize, $selectedCategories, 
-                                               $isShowed, $isFeatured, $productDescription, $productSpecification);
-                $db->close();
-            }
-            if($productId != null){
-                $prod_id = $productId;
-            }
-
             $imageLocations = [];
+            $db = new Database();
+            if($productId){
+                $prod_id = $productId;
+                $imageLocations = $db->getProductDetails($prod_id)['p_images'];
+            }else{
+                $prod_id = $db->addToProduct($productName, null, $productPrice, $productSize, $selectedCategories, 
+                                               $isShowed, $isFeatured, $productDescription, $productSpecification); 
+            }
+            $db->close();
+            if(!$prod_id) return;
+
             $imgRemoveList = [];
             for ($x = 1; $x <= 9; $x++) {
                 // Construct the input name dynamically
@@ -93,39 +90,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $target_file = $target_dir . $image_name;
                     $upStatus = $img->upload($_FILES[$inputName]["tmp_name"], $target_file); // $_FILES["image-1"]["tmp_name"]
                     if($upStatus)
-                        $imageLocations[] = $realtive_image_path;
+                        $imageLocations[$x-1] = $realtive_image_path;
                     else{
-                        $imageLocations[] = null;
-                        $imgRemoveList[] = $prod_img_folder . "prod_img_" . $prod_id . "-" . $x ;
+                        if($imageLocations[$x-1] && str_contains($_POST['image_src-'.$x], 'assets/img/cat/dumy.png')){
+                            $imgRemoveList[] = $imageLocations[$x-1];
+                            $imageLocations[$x-1] = null;
+                        }
                     }     
                 } else {
-                    $imageLocations[] = null;
-                    $imgRemoveList[] = $prod_img_folder . "prod_img_" . $prod_id . "-" . $x ;
-                    echo "No file uploaded for {$inputName} or there was an error.<br>";
+                    if($imageLocations[$x-1] && str_contains($_POST['image_src-'.$x], 'assets/img/cat/dumy.png')){
+                        $imgRemoveList[] = $imageLocations[$x-1];
+                        $imageLocations[$x-1] = null;
+                        //$imgRemoveList[] = $prod_img_folder . "prod_img_" . $prod_id . "-" . $x ;
+                    }
                 }
             }
-            
+
             // Convert image paths array to JSON format
             $jsonImagePaths = json_encode($imageLocations);
             $message = $jsonImagePaths . " has been uploaded.";
 
             // Edit/Update category item
             $db = new Database();
-            if($productId != null){
+            if($productId){
                 $db->updateProduct($productName, $jsonImagePaths, $productPrice, $productSize, $selectedCategories, 
                                 $isShowed, $isFeatured, $productDescription, $productSpecification, $prod_id); 
-            }
-            // Images updated
-            if($productId == null){
-                $db->updateProduct(null, $jsonImagePaths, null, null, null, null, null, null, null, $prod_id);
+            }else{
+                $db->updateProduct(null, $jsonImagePaths, null, null, null, null, null, null, null, $prod_id); // Images updated
             }
             $db->close();  
 
-            // remove image if not listed
-            foreach($imgRemoveList as $image){
-                $img->remove($image);
-            }
-        }
+            if($productId){ // remove if edit product
+                // remove image if not listed
+                // echo '<pre>';
+                // print_r($imgRemoveList);
+                // echo '</pre>';
+                // exit();
+                foreach($imgRemoveList as $image){
+                    unlink('../'.$image);
+                }
+            }    
 
 }    
 

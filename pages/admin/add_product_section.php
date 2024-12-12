@@ -1,3 +1,11 @@
+
+<script src="assets/js/tinymce/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+  tinymce.init({
+    selector: '#ProductSpecification',
+    license_key: 'gpl'
+  });
+</script>
 <style>
   .dropdown-menu {
       border: 1px solid #ccc;
@@ -84,13 +92,13 @@ if (isset($_GET['id'])){
 
         <div class="form-group">
           <label for="ProductName">Product Name</label>
-          <input type="text" class="form-control" id="ProductName" name="ProductName" placeholder="Product Name" <?php if($productDetails != null && $productDetails['p_name'] != null) echo 'value="'. htmlspecialchars($productDetails['p_name']) . '"'; ?>>
+          <input type="text" class="form-control" id="ProductName" name="ProductName" placeholder="Product Name" <?php if($productDetails != null && $productDetails['p_name'] != null) echo 'value="'. htmlspecialchars($productDetails['p_name']) . '"'; else echo 'value=""'; ?> required>
         </div>
 
     <div class="row">
       <div class="col-12 col-sm-6">
         <div class="form-group">
-            <label for="exampleInputFile">Category image</label>
+            <label for="exampleInputFile">Product images</label>
               <!-- -->
               <div class="row">
                 
@@ -107,12 +115,12 @@ if (isset($_GET['id'])){
       <div class="col-12 col-sm-6">
         <div class="form-group">
           <label for="ProductPrice">Product Price</label>
-          <input type="text" class="form-control" id="ProductPrice" name="ProductPrice" placeholder="Product Price" <?php if($productDetails != null && $productDetails['p_price'] != null) echo 'value="'. htmlspecialchars($productDetails['p_price']) . '"'; ?>>
+          <input type="number" class="form-control" id="ProductPrice" name="ProductPrice" placeholder="Product Price" <?php if($productDetails != null && $productDetails['p_price'] != null) echo 'value="'. htmlspecialchars($productDetails['p_price']) . '"'; else echo 'value=""'; ?> required>
         </div>
 
         <div class="form-group">
           <label for="ProductSize">Product Size</label>
-          <input type="text" class="form-control" id="ProductSize" name="ProductSize" placeholder="Product Size" <?php if($productDetails != null && $productDetails['p_sizes'] != null) echo 'value="'. htmlspecialchars($productDetails['p_sizes']) . '"'; ?>>
+          <input type="text" class="form-control" id="ProductSize" name="ProductSize" placeholder="Product Size" <?php if($productDetails != null && $productDetails['p_sizes'] != null) echo 'value="'. htmlspecialchars($productDetails['p_sizes']) . '"'; else echo 'value=""'; ?> required>
         </div>
 
         <div class="row">
@@ -174,7 +182,7 @@ if (isset($_GET['id'])){
 
 	<div class="form-group">
           <label for="ProductSpecification">Product Specification</label>
-          <input type="text" class="form-control" id="ProductSpecification" name="ProductSpecification" placeholder="Product Specification" <?php if($productDetails != null && $productDetails['p_specification'] != null) echo 'value="'. htmlspecialchars($productDetails['p_specification']) . '"'; ?>>
+          <textarea class="form-control" id="ProductSpecification" name="ProductSpecification" placeholder="Product Specification" ><?php if($productDetails != null && $productDetails['p_specification'] != null) echo htmlspecialchars($productDetails['p_specification']); ?></textarea>
         </div>
 
       	<div class="form-group">
