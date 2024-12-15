@@ -11,7 +11,7 @@
                   <?php echo htmlspecialchars($row['o_id']); ?>
              </td>
              <td class="tool">
-                <a href="single_order.php?id=<?php echo htmlspecialchars($row['o_id']); ?>&amt=<?php echo htmlspecialchars($row['order_amount']); ?>">Open</a>
+                <a href="order_details.php?o_id=<?php echo htmlspecialchars($row['o_id']); ?>">Open</a>
              </td>
                 
              <td class="name">

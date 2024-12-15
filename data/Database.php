@@ -277,6 +277,27 @@ class Database {
         return $productDetails;
     }
 
+    public function getProductWithPartialName($query) {
+        // SQL query to select data
+        $sql = "SELECT * FROM products WHERE p_name LIKE ? ";
+        $stmt = $this->prepare($sql);
+        $searchTerm = "%$query%";
+        $stmt->bind_param("s", $searchTerm);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result; 
+    } 
+
+    public function updateOrdertUnit($oid, $pid, $units) {
+        // SQL query to select data
+        $sql = "UPDATE order_table SET o_unit = ? WHERE p_id = ? AND o_id = ?";
+        $stmt = $this->prepare($sql);
+        $stmt->bind_param("dii", $units, $pid, $oid); // d for daouble & i for number
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result; 
+    } 
+
 
     public function getMainCategories($query) {
         // SQL query to select data
@@ -639,6 +660,64 @@ public function addOderItem($o_id, $u_ip, $p_id, $o_unit, $p_size, $c_notes) {
         // $totalItems = mysqli_num_rows($result);
     }
 
+    public function queryForPartialOrderIdListPage($like_o_id, $page, $itemsPerPage) {
+        // SQL query to select data
+        $offset = ($page - 1) * $itemsPerPage ;
+        $sql = "SELECT 
+                    o.o_id,
+                    o.o_date,
+                    o.u_ip,
+                    SUM(o.o_unit * p.p_price) AS order_amount
+                FROM 
+                    order_table o
+                JOIN 
+                    products p ON o.p_id = p.p_id
+                WHERE 
+                    o_id LIKE '%" . $like_o_id . "%'     
+                GROUP BY 
+                    o.o_id, o.o_date
+                ORDER BY 
+                    o.o_date ASC
+                LIMIT " 
+                    .$itemsPerPage .
+                " OFFSET "
+                    . $offset; 
+                    
+        $result = $this->query($sql);
+
+        $relatedOrderList['order'] = [];
+        if ($result) {
+            // Assuming $result is an associative array of rows
+            foreach ($result as $row) {
+                // Check if the product already exists in the array
+                if (isset($row['o_id'])) {
+                    // Store product name and price
+                    $relatedOrderList['order'][] = [
+                        'o_id' => $row['o_id'],
+                        'o_date' => $row['o_date'],
+                        'u_ip' => $row['u_ip'],
+                        'order_amount' => $row['order_amount']
+                    ];
+                }  
+            }
+        }
+        // echo '<pre>';
+        // print_r($relatedOrderList);
+        // echo '<pre/>';
+        //exit();
+        return $relatedOrderList; 
+    }
+
+    public function queryCountForPartialOrderIdListPage($like_o_id) {
+        // SQL query to select data
+        $sql = "SELECT COUNT(DISTINCT o_id) AS total_count FROM order_table WHERE o_id LIKE '%" . $like_o_id . "%'";
+        $result = $this->query($sql);
+        $row = mysqli_fetch_assoc($result);
+        $totalCount = (int)$row['total_count'];
+        return $totalCount;
+        // $totalItems = mysqli_num_rows($result);
+    }
+
     public function orderDetails($o_id) {
         // SQL query to select data
         $sql = "SELECT 
@@ -654,7 +733,7 @@ public function addOderItem($o_id, $u_ip, $p_id, $o_unit, $p_size, $c_notes) {
             INNER JOIN 
                 products p ON o.p_id = p.p_id
             WHERE
-                o.o_id = '" .$o_id . "'"; 
+                o.o_id = '" .$o_id . "' ORDER BY o.o_date DESC"; 
                     
         $result = $this->query($sql);
 
@@ -683,6 +762,8 @@ public function addOderItem($o_id, $u_ip, $p_id, $o_unit, $p_size, $c_notes) {
         //exit();
         return $orderDetails; 
     }
+
+   
 
 
 }

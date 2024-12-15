@@ -6,14 +6,22 @@ $page = 1;
 if (isset($_GET['page'])) 
     $page = $_GET['page'];
 
+if (isset($_GET['o_id'])) 
+    $like_o_id = $_GET['o_id'];    
+
 $totalItems = 0; // Total number of items
 $itemsPerPage = 10; // Items per page  
 
 // Create an instance of the Database class
 $db = new Database();
 
-$result = $db->queryForOrderListPage($page, $itemsPerPage);
-$totalItems = $db->queryCountForOrderListPage();
+if (isset($_GET['o_id'])){
+    $result = $db->queryForPartialOrderIdListPage($like_o_id, $page, $itemsPerPage);
+    $totalItems = $db->queryCountForPartialOrderIdListPage($like_o_id);
+} else{
+    $result = $db->queryForOrderListPage($page, $itemsPerPage);
+    $totalItems = $db->queryCountForOrderListPage();
+}
 
 // Close the database connection
 $db->close();
@@ -25,7 +33,7 @@ $db->close();
     <tbody>
         <tr>
             <form action="order_list.php" method="get" id="searchForm">
-            <td>Order ID : </td><td><input id="OrderId" name="OrderId"></input></td>
+            <td>Order ID : </td><td><input id="o_id" name="o_id"></input></td>
             <td>Date : </td><td><input type="text" id="Date" name="Date" class="form-control datepicker" placeholder="Select Date" autocomplete="off"></td>
             <td><button type="submit" class="btn btn-primary btn-sm">Search</button></td>
             </from>

@@ -42,14 +42,18 @@ if (isset($_POST['CategoryName']) && $_POST['CategoryName'] != null){
     <div class="col-12 col-sm-6">
         <div class="form-group">
           <label for="CategoryName">Category Name</label>
-          <input type="text" class="form-control" id="CategoryName" name="CategoryName" placeholder="Category Name" <?php if($category != null && $category['cat_name'] != null) echo 'value="'. htmlspecialchars($category['cat_name']) . '"'; ?> required >
-          <div id="categoryList" class="dropdown-menu"></div>
+          <div class="input-group">
+            <input type="text" class="form-control" id="CategoryName" name="CategoryName" placeholder="Category Name" <?php if($category != null && $category['cat_name'] != null) echo 'value="'. htmlspecialchars($category['cat_name']) . '"'; ?> required >
+            <div id="categoryList" class="dropdown-menu"></div>
+          </div>
         </div>
 
         <div class="form-group">
           <label for="SubCategoryName">Sub Category</label>
-          <input type="text" class="form-control" id="SubCategoryName" name="SubCategoryName" placeholder="Sub Category Name" <?php if($category != null && $category['sub_cat_name'] != null) echo 'value="'. htmlspecialchars($category['sub_cat_name']) . '"'; ?> required >
-          <div id="subCategoryList" class="dropdown-menu"></div>
+          <div class="input-group">
+            <input type="text" class="form-control" id="SubCategoryName" name="SubCategoryName" placeholder="Sub Category Name" <?php if($category != null && $category['sub_cat_name'] != null) echo 'value="'. htmlspecialchars($category['sub_cat_name']) . '"'; ?> required >
+            <div id="subCategoryList" class="dropdown-menu"></div>
+          </div>
         </div>
 
         <div class="form-group">

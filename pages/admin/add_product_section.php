@@ -115,7 +115,7 @@ if (isset($_GET['id'])){
       <div class="col-12 col-sm-6">
         <div class="form-group">
           <label for="ProductPrice">Product Price</label>
-          <input type="number" class="form-control" id="ProductPrice" name="ProductPrice" placeholder="Product Price" <?php if($productDetails != null && $productDetails['p_price'] != null) echo 'value="'. htmlspecialchars($productDetails['p_price']) . '"'; else echo 'value=""'; ?> required>
+          <input type="number" step="0.001" class="form-control" id="ProductPrice" name="ProductPrice" placeholder="Product Price" <?php if($productDetails != null && $productDetails['p_price'] != null) echo 'value="'. htmlspecialchars($productDetails['p_price']) . '"'; else echo 'value=""'; ?> required>
         </div>
 
         <div class="form-group">
