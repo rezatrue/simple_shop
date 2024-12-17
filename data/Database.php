@@ -292,12 +292,25 @@ class Database {
         // SQL query to select data
         $sql = "UPDATE order_table SET o_unit = ? WHERE p_id = ? AND o_id = ?";
         $stmt = $this->prepare($sql);
-        $stmt->bind_param("dii", $units, $pid, $oid); // d for daouble & i for number
+        $stmt->bind_param("dis", $units, $pid, $oid); // d for daouble & i for number
         $stmt->execute();
         $result = $stmt->get_result();
         return $result; 
     } 
 
+    public function deleteOrdertItem($oid, $pid) {
+        // SQL query to select data
+        $sql = "DELETE FROM order_table WHERE p_id = ? AND o_id = ?";
+        $stmt = $this->prepare($sql);
+        $stmt->bind_param("is", $pid, $oid); // d for double & i for number
+        if ($stmt->execute()) {
+            return true; // Or any other success indication
+        } else {
+            // Log or handle the error
+            error_log("Delete failed: " . $stmt->error);
+            return false;
+        }           
+    } 
 
     public function getMainCategories($query) {
         // SQL query to select data

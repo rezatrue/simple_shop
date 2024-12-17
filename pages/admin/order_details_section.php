@@ -1,9 +1,8 @@
 <?php
 
-require './data/manage_single_order.php'; 
+require './data/Database.php'; 
 
 // Create an instance of the Database class
-$mso = new manageSingleOrder();
 
 $items = 0;
 $grand_total  = 0;
@@ -12,7 +11,8 @@ if (isset($_GET['o_id']))
     $o_id = $_GET['o_id'];
 
 if(isset($_GET['o_id'])){
-    $result = $mso->orderDetails($o_id);
+    $db = new Database();
+    $result = $db->orderDetails($o_id);
     if (!empty($result['item'])) {
         foreach ($result['item'] as $row) {
             $items++;
@@ -44,7 +44,7 @@ if(isset($_GET['o_id'])){
             <strong id="grand-total" name="grand-total" data-price="<?php echo $grand_total; ?>"> Total: <?php echo $grand_total; ?></strong>
         </div>
         <div class="name">
-            <button class="btn btn-success btn-sm" type="submit" name="submit" value="remove">Close</button>
+            <button class="btn btn-success btn-sm" type="submit" name="submit" value="remove">Close Order</button>
         </div>
     </div>
           
@@ -54,7 +54,7 @@ if(isset($_GET['o_id'])){
     <div class="table-responsive">
        <table class="table table-striped table-hover w-auto">
           <thead class="table-light">
-            <form action="" method="POST">
+            <form action="./data/manage_single_order.php" method="POST">
                 <input type="hidden" id="o_id" name="o_id" value="<?php if(isset($_GET['o_id'])) echo $o_id; else echo 0; ?>">
                 <input type="hidden" id="search-pid" name="search-pid" value="0">
             <tr>
@@ -69,14 +69,14 @@ if(isset($_GET['o_id'])){
                 </td>
                 <td class="name">
                     <div class="input-group">
-                        <input type="number" class="form-control" id="search-unit" name="search-unit" placeholder="Product size" value="0">
+                        <input type="number" class="form-control" id="search-unit" name="search-unit" placeholder="Product size" min="0" value="0" step=".001">
                         <div class="input-group-append">
                             <button type="submit" class="btn btn-primary" name="submit" value="add">ADD</button>
                         </div>
                     </div>
                 </td>
                 <td class="name">
-                    <strong id="search-unit-price">1</strong>
+                    <strong id="search-unit-price">00</strong>
                 </td>
                 <td class="name">
                     <input type="text" class="form-control col-xs-2" id="search-size" name="search-size" placeholder="Product size" value="">
@@ -86,29 +86,7 @@ if(isset($_GET['o_id'])){
                 </td>
             </tr>
             </form>
-            <?php
-                // Check if the form is submitted
-                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                    
-                    if (isset($_POST['search-name']) && isset($_POST['search-unit'])){
-                        if (isset($_POST['o_id']))
-                            $o_id = $_POST['o_id'];
-                        if (isset($_POST['search-pid']))
-                            $p_id = $_POST['search-pid'];
-                        if (isset($_POST['search-unit']))
-                            $o_unit = $_POST['search-unit'];
-                        if (isset($_POST['search-size']))
-                            $p_size = $_POST['search-size'];
-                        if (isset($_POST['search-comment']))
-                            $c_notes = $_POST['search-comment'];
-
-                        // Call the function and store the result
-                        $orderDetails = $mso->createNewOrderItem($o_id, $p_id, $o_unit, $p_size, $c_notes);
-                    
-                    }else return;
-                    
-                }
-            ?>
+           
             <tr class="bg-secondary">
                 <td>Amount</td>    
                 <td>Product</td> 
@@ -122,18 +100,18 @@ if(isset($_GET['o_id'])){
           </thead>
 
           <tbody>
-
-                    <?php 
-                        if (!empty($result['item'])) {
-                            foreach ($result['item'] as $row) {
-                                include('./pages/admin/order_details_single_row.php');
-                            }
+                <?php 
+                    if (!empty($result['item'])) {
+                        foreach ($result['item'] as $row) {
+                            include('./pages/admin/order_details_single_row.php');
                         }
-                    ?>
+                    }
+                ?>
           </tbody>
        </table>
     </div>
 <!-- table end-->
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>  
 <script> 
 function recalculateTotalNumbers(currentValue){
      alert(currentValue);
@@ -174,18 +152,30 @@ $(document).ready(function() {
             }
         });
 
-        // Select a category
+        // Select a product
         $(document).on('click', '.product-item', function() {
             let pname = $(this).text();
             let price = $(this).data('price');
             let sizes = $(this).data('sizes');
             let pid = $(this).data('pid');
+            $('#productList').hide();
+            $('#search-unit').val('0');
             $('#search-pid').val(pid);
             $('#search-name').val(pname);
-            $('#search-unit').val('0');
             $('#search-unit-price').text(price);
             $('#search-size').val(sizes);
-            $('#productList').hide();
+            // Iterate through all elements with IDs starting with 'id-'
+            $('[id^="id-"]').each(function() {
+                var itemId = parseInt($(this).val()) || 0; 
+                if(itemId == pid){
+                    $('#search-pid').val('0');
+                    $('#search-name').val('');
+                    $('#search-unit-price').text('0');
+                    $('#search-size').val('');
+                    alert(pname +' is already in the list.')
+                }
+            });
+
         });
     });
 </script>   

@@ -11,6 +11,8 @@
   <link rel="stylesheet" href="./plugins/fontawesome-free/css/all.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="./assets/css/adminlte.min.css">
+  <!-- Bootstrap Toggle -->
+  <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
   <!-- jQuery -->
   <script src="./plugins/jquery/jquery.min.js"></script>
 </head>
