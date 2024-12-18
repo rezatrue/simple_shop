@@ -3,14 +3,15 @@
         <div class="card rounded-0">
             <img class="card-img rounded-0 img-fluid" src="<?php
                                                             $noimage = true;
+                                                            if($row['p_images']){
                                                             foreach($row['p_images'] as $img){
                                                                 if($img != null){
                                                                     echo $img;
                                                                     $noimage = false;
-                                                                    break;
+                                                                    break;}
                                                                 }
                                                             }
-                                                            if($noimage) echo 'assets/img/cat/dumy.png';?>">
+                                                            if($noimage) echo 'assets/img/prod/dumy.png';?>">
             <div class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
                 <ul class="list-unstyled">
                     <li><a class="btn btn-success text-white" href="product_details.php?id=<?php echo htmlspecialchars($row['p_id']); ?>"><i class="far fa-heart"></i></a></li>

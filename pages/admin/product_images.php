@@ -35,7 +35,7 @@ imageInput_<?php echo $x; ?>.addEventListener('change', function(event) {
             const height = img.naturalHeight;
 
             // Check for minimum dimensions
-            if (width < 800 || height < 800) {
+            if (width < 600 || height < 800) {
                 alert("Image dimensions must be at least 800x800 pixels.");
             }else if (file.size < 100 * 1024) {
                 alert("File size must be greater than 100KB.");

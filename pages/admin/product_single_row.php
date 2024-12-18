@@ -19,7 +19,18 @@
              </td>
 
              <td class="name">
-                  <img height="40px" weight="40px" src="<?php echo $row['p_image']; ?>" >
+                  <img height="40px" weight="40px" 
+                  src="<?php
+                              $noimage = true;
+                              if($row['p_images']){
+                              foreach($row['p_images'] as $img){
+                                   if($img != null){
+                                        echo $img;
+                                        $noimage = false;
+                                        break;}
+                                   }
+                              }
+                              if($noimage) echo 'assets/img/cat/dumy.png';?>" >
              </td>
 
              <td class="name">

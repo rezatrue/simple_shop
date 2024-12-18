@@ -9,10 +9,14 @@ $db = new Database();
 $product  = $db->getProductDetails($id);
 // Close the database connection
 // echo '<pre>';
-// print_r($product);
+// print_r(sizeof($product));
 // echo '</pre>';
 // exit();
-$db->close(); 
+$db->close();
+if(sizeof($product) == 0){
+    echo "No Product Found. <a href='shop.php'>Go back</a>";
+    exit();
+}
 
 ?>
     <!-- Modal -->
@@ -40,6 +44,7 @@ $db->close();
             <div class="row">
                 <div class="col-lg-5 mt-5">
                     <?php
+                        
                         $images = [];
                         if($product['p_images']){
                             foreach($product['p_images'] as $img){
@@ -49,6 +54,7 @@ $db->close();
                             } 
                         }
                         include('product_images_carousel.php'); 
+
                         ?>
                 </div>
                 <!-- col end -->

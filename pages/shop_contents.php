@@ -109,9 +109,14 @@ $itemsPerPage = 6; // Items per page
                     // Create an instance of the Database class
                     $db = new Database();
 
-                    if(isset($_GET['cat'])){                       
-                        $result = $db->queryForRelatedProduct('visitor', $cat_id, $page, $itemsPerPage);
-                        $totalItems = $db->productCountForCat('visitor', $cat_id); 
+                    if(isset($_GET['cat'])){
+                        if($db->isMainCat($cat_id) == 0){
+                            $result = $db->queryAllSubcatProductsForCat($cat_id, $page, $itemsPerPage);
+                            $totalItems = $db->productCountForMainCat($cat_id);
+                        }else{
+                            $result = $db->queryForRelatedProduct('visitor', $cat_id, $page, $itemsPerPage);
+                            $totalItems = $db->productCountForCat('visitor', $cat_id); 
+                        }                       
                     }else{
                         $result = $db->queryForListPage('visitor', $page, $itemsPerPage);
                         $totalItems = $db->queryCountForListPage('visitor');

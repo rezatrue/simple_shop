@@ -19,8 +19,6 @@ require './data/Database.php'; // Adjust the path as necessary
         </div>
     </div>
 
-
-
     <!-- Start Banner Hero -->
     <div id="template-mo-zay-hero-carousel" class="carousel slide" data-bs-ride="carousel">
         <ol class="carousel-indicators">
@@ -99,7 +97,6 @@ require './data/Database.php'; // Adjust the path as necessary
     </div>
     <!-- End Banner Hero -->
 
-
     <!-- Start Categories of The Month -->
     <section class="container py-5">
         <div class="row text-center pt-3">
@@ -135,7 +132,6 @@ require './data/Database.php'; // Adjust the path as necessary
         </div>
     </section>
     <!-- End Categories of The Month -->
-
 
     <!-- Start Featured Product -->
     <section class="bg-light">

@@ -77,6 +77,27 @@ class Database {
         // $totalItems = mysqli_num_rows($result);
     }
 
+    public function productCountForMainCat($cat_id) {
+        // SQL query to select data
+
+        $sql = "SELECT 
+            COUNT(*) as total_count 
+        FROM 
+            product_categories pc
+        JOIN 
+            products p ON pc.p_id = p.p_id
+        where 
+            pc.parent_cat_id = " . $cat_id . " 
+        And
+            p.p_is_show = True";
+
+        $result = $this->query($sql);
+        $row = mysqli_fetch_assoc($result);
+        $totalCount = (int)$row['total_count'];
+        return $totalCount;
+    }
+
+
     // Nmae changed previous one was queryCountFor(
     public function productCountForCat($user, $cat_id) {
         // SQL query to select data
@@ -120,7 +141,7 @@ class Database {
                     $relatedProductList['product'][] = [
                         'p_id' => $row['p_id'],
                         'p_name' => $row['p_name'],
-                        'p_image' => $row['p_image'],
+                        'p_images' => json_decode($row['p_images'], true),
                         'p_price' => $row['p_price'],
                         'p_sizes' => $row['p_sizes'],
                         'p_is_show' => $row['p_is_show'],
@@ -146,6 +167,52 @@ class Database {
         //echo $sql;
         return $this->query($sql); 
     }*/
+
+    public function queryAllSubcatProductsForCat($cat_id, $page, $itemsPerPage) {
+        // SQL query to select data
+        $offset = ($page - 1) * $itemsPerPage ;
+
+        $sql = "SELECT 
+            p.p_id, p.p_name, p.p_images, p.p_price, p.p_sizes
+        FROM 
+            products p
+        JOIN 
+            product_categories pc ON p.p_id = pc.p_id   
+        WHERE 
+            pc.parent_cat_id = " . $cat_id . "
+        AND
+            p.p_is_show = true     
+        LIMIT "
+            . $itemsPerPage .
+        " OFFSET "
+            . $offset;
+       
+        $result = $this->query($sql);
+
+        $relatedProductList['product'] = [];
+        if ($result) {
+            // Assuming $result is an associative array of rows
+            foreach ($result as $row) {
+                // Check if the product already exists in the array
+                if (isset($row['p_id'])) {
+                    // Store product name and price
+                    $relatedProductList['product'][] = [
+                        'p_id' => $row['p_id'],
+                        'p_name' => $row['p_name'],
+                        'p_images' => json_decode($row['p_images'], true),
+                        'p_price' => $row['p_price'],
+                        'p_sizes' => $row['p_sizes']
+                    ];
+                }  
+            }
+        }
+        // echo '<pre>';
+        // print_r($relatedProductList);
+        // echo '<pre/>';
+        //exit();
+        return $relatedProductList;
+
+    }
 
     // repalce for "public function queryFor("
     public function queryForRelatedProduct($user, $cat_id, $page, $itemsPerPage) {
@@ -348,6 +415,16 @@ class Database {
         $result = $this->query($sql);    
         return $result;
     
+    }
+
+    public function isMainCat($cat_id) {
+        // SQL query to select data
+        $sql = "SELECT COUNT(*) FROM categories WHERE cat_id = '" . $cat_id . "' AND parent_cat_id = '0'";    
+        $result = $this->query($sql);
+        if($result)    
+            return 1;
+        else
+            return 0;
     }
 
 // SQL query for admin
