@@ -606,9 +606,10 @@ class Database {
 // SQL query for admin
 
 public function addOderItem($o_id, $u_ip, $p_id, $o_unit, $p_size, $c_notes) {
-
+ 
     $sql = "INSERT INTO order_table ( o_id,  o_date , u_ip ,  p_id ,  o_unit ,  p_size ,  c_notes ) 
             VALUES ('" . $o_id . "', now() ,'" . $u_ip . "','". $p_id . "','". $o_unit . "','". $p_size . "','". $c_notes . "')";
+            echo $sql;
     $result = $this->query($sql);
 
     if ($result) {    
@@ -630,9 +631,9 @@ public function addOderItem($o_id, $u_ip, $p_id, $o_unit, $p_size, $c_notes) {
                 JOIN 
                     products p ON o.p_id = p.p_id
                 GROUP BY 
-                    o.o_id, o.o_date
+                    o.o_id 
                 ORDER BY 
-                    o.o_date ASC
+                    o.o_date DESC
                 LIMIT " 
                     .$itemsPerPage .
                 " OFFSET "

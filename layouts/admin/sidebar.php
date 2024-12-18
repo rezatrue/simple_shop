@@ -44,12 +44,24 @@
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
           <li class="nav-item">
+            <a href="order_details.php" class="nav-link">
+              <i class="nav-icon fas fa-clipboard-list"></i>
+              <p>New Order</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="order_list.php" class="nav-link">
+              <i class="nav-icon fas fa-columns"></i>
+              <p>Order List</p>
+            </a>
+          </li>     
+          <li class="nav-item">
             <a href="product_list.php" class="nav-link">
               <i class="nav-icon fas fa-th"></i>
               <p>Products List</p>
             </a>
           </li>          
-	  <li class="nav-item">
+	        <li class="nav-item">
             <a href="add_product.php" class="nav-link">
               <i class="nav-icon fas fa-edit"></i>
               <p>Add Products</p>
@@ -79,12 +91,7 @@
               </li>
             </ul>
           </li>
-          <li class="nav-item">
-            <a href="order_list.php" class="nav-link">
-              <i class="nav-icon fas fa-columns"></i>
-              <p>Order List</p>
-            </a>
-          </li>
+
         </ul>
       </nav>
       <!-- /.sidebar-menu -->

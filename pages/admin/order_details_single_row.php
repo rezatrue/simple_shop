@@ -57,7 +57,8 @@ $(document).ready(function() {
           var notes = $('#notes-<?php echo $row['p_id']; ?>').val(); 
           var size = $('#size-<?php echo $row['p_id']; ?>').val(); 
           var unit = parseFloat($('#unit-<?php echo $row['p_id']; ?>').val()) || 0; // Default to 0 if NaN   
-          alert(oId + ' ' + pId + ' ' + isOn + ' ' + notes + ' ' + size + ' ' + unit);        
+          //alert(oId + ' ' + pId + ' ' + isOn + ' ' + notes + ' ' + size + ' ' + unit);   
+          //alert('' + isOn);
           $.ajax({
                url: './data/order_item_update.php',
                method: 'GET',

@@ -8,18 +8,21 @@ require 'Database.php';
         $status = $_GET['status'];
         $p_id = $_GET['pid'];
         $o_id = $_GET['oid'];
-
-        if($status){
+        
+        if($status == 'false'){
             $result = $db->deleteOrdertItem($o_id, $p_id);
-        }else{
+        }
+
+        if($status == 'true'){
             $u_ip = $_SERVER['REMOTE_ADDR'];
             $o_unit = $_GET['ounit'];
             $p_size = $_GET['psize'];
             $c_notes = $_GET['cnotes'];
+            echo '<pre/>';
+            print_r($o_id);
             $result = $db->addOderItem($o_id, $u_ip, $p_id, $o_unit, $p_size, $c_notes); 
         }
         $db->close();
-    }else{
-        console.log('No action performed');
+
     }
 ?>
