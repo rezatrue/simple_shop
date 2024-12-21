@@ -29,24 +29,32 @@ $db->close();
 ?>
 
 <!-- general form elements -->
-<div class="table-responsive mb-2">
+<!-- <div class="table-responsive mb-2">
     <tbody>
-        <tr>
+        <tr> -->
             <form action="order_list.php" method="get" id="searchForm">
-            <td>Order ID : </td><td><input id="o_id" name="o_id"></input></td>
-            <td>Date : </td><td><input type="text" id="Date" name="Date" class="form-control datepicker" placeholder="Select Date" autocomplete="off"></td>
-            <td><button type="submit" class="btn btn-primary btn-sm">Search</button></td>
+            <div class="row">
+                <div class="col-12 col-sm-4">
+                    Order ID : <input id="o_id" name="o_id"></input>
+                </div>
+                <div class="col-12 col-sm-4">
+                    Date : <input type="text" id="Date" name="Date" class="form-control datepicker" placeholder="Select Date" autocomplete="off">
+                </div> 
+                <div class="col-12 col-sm-4"> 
+                    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+                </div>    
+            </div>
             </from>
-        </tr>
+        <!-- </tr>
     </tbody>
-</div>
-<div class="card card-primary">
+</div> -->
+<div class="card card-primary">  
   <div class="card-header">
     <h3 class="card-title">Order List (total: <?php echo $totalItems; ?>)</h3>
   </div>
   <!-- /.card-header -->
 <!-- table start -->
-    <div class="table-responsive">
+    <div class="table-responsive col-md-8 mx-auto">
        <table class="table table-striped table-hover w-auto">
           <thead class="table-light">
             <tr>

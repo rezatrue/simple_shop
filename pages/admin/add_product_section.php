@@ -73,7 +73,10 @@ if (isset($_GET['id'])){
   $productDetails = $db->getProductDetails($productId);
   $db->close();
 }
-
+// echo '<pre>';
+// print_r($productDetails);
+// echo '</pre>';
+// exit();
 ?>
 
 
@@ -85,7 +88,7 @@ if (isset($_GET['id'])){
   <!-- /.card-header -->
 
 <!-- form start -->
-<form action="./data/product_upload.php" method="post" enctype="multipart/form-data" >
+<form id="addProductForm" action="./data/product_upload.php" method="post" enctype="multipart/form-data" >
 <div class="card-body">
 
         <input type="hidden" id="id" name="id" <?php if($productDetails != null && $productDetails['p_id'] != null) echo 'value="'. htmlspecialchars($productDetails['p_id']) . '"'; ?> required>
@@ -127,7 +130,7 @@ if (isset($_GET['id'])){
             <div class="col-12 col-sm-6">
               <div class="form-group">
                 <label class="form-check-label" for="IsShow"><b>Show</b></label> 
-                <input type="checkbox" style="margin-left:10px; margin-top:8px;" class="form-check-input" id="IsShow" name="IsShow" <?php if($productDetails != null && $productDetails['p_is_show'] == 1) echo "checked"; ?>>
+                <input type="checkbox" style="margin-left:10px; margin-top:8px;" class="form-check-input" id="IsShow" name="IsShow" <?php if($productDetails != null && $productDetails['p_is_show'] == 1) echo "checked"; if(!$productDetails) echo "checked";?>>
               </div>
             </div>
             <div class="col-12 col-sm-6">
@@ -141,12 +144,13 @@ if (isset($_GET['id'])){
         <!--  Caregory area starts here -->
         <div class="form-group">
           <label for="ProductCategory">Product Categories</label>
+          <div id="errorMessage" class="text-danger"></div>
           <div id="selectedCategories">
           <?php 
                 if (!empty($productDetails['categories'])) {
                   foreach ($productDetails['categories'] as $category) {
                   echo '<div class="selected-item">'; 
-                  echo '<input type="hidden" name="selected-category[]" value="' . htmlspecialchars($category["sub_cat_id"]) . '">'; 
+                  echo '<input type="hidden" name="selected-category[]" value="' . htmlspecialchars($category["sub_cat_id"]) . '" required>'; 
                   if(!empty($category['parent_cat'])) echo htmlspecialchars($category['parent_cat']) . " -> ";
                   echo htmlspecialchars($category['cat_name']) . ' <span class="remove-item">&times;</span>';
                   echo "</div>";
@@ -198,99 +202,90 @@ if (isset($_GET['id'])){
 
 
 <script>
-    const fileInput = document.getElementById('customFile');
-    const preview = document.getElementById('preview');
 
-    $(document).ready(function() {
-        // Load categories on input
-        $('#ProductCategory').on('input', function() {
-            let query = $(this).val();
-            if (query.length > 2) {
-                $.ajax({
-                    url: './data/fetch_categories.php',
-                    method: 'GET',
-                    data: { query: query },
-                    success: function(data) {
-                        $('#categoryList').html(data).show();
-                    }
-                });
-            } else {
-                $('#categoryList').hide();
-            }
-        });
+  $(document).ready(function() {
+      // Load categories on input
+      $('#ProductCategory').on('input', function() {
+          let query = $(this).val();
+          if (query.length > 2) {
+              $.ajax({
+                  url: './data/fetch_categories.php',
+                  method: 'GET',
+                  data: { query: query },
+                  success: function(data) {
+                      $('#categoryList').html(data).show();
+                  }
+              });
+          } else {
+              $('#categoryList').hide();
+          }
+      });
 
-        // Select a category
-        $(document).on('click', '.category-item', function() {
-            let category = $(this).text();
-            $('#ProductCategory').val(category);
-            $('#categoryList').hide();
-            
-            // Load subcategories
-            $.ajax({
-                url: './data/fetch_subcategories.php',
-                method: 'GET',
-                data: { category: category },
-                success: function(data) {
-                    $('#subCategoryList').html(data).show();
-                }
-            });
-        });
+      // Select a category
+      $(document).on('click', '.category-item', function() {
+          let category = $(this).text();
+          $('#ProductCategory').val(category);
+          $('#categoryList').hide();
+          
+          // Load subcategories
+          $.ajax({
+              url: './data/fetch_subcategories.php',
+              method: 'GET',
+              data: { category: category },
+              success: function(data) {
+                  $('#subCategoryList').html(data).show();
+              }
+          });
+      });
 
-        // Select a subcategory
-        $(document).on('click', '.subcategory-item', function() {
-            let category = $('#ProductCategory').val();
-            let categoryid = $(this).get(0).getAttribute('value');
-            let subcategory = $(this).text();
-            $('#SubCategory').val('');
-            $('#ProductCategory').val('');
-            $('#subCategoryList').hide();
-            
-            // Display selected categories and subcategories
-            $('#selectedCategories').append(`
-                <div class="selected-item">
-                  <input type="hidden" name="selected-category[]" value="${categoryid}">
-                  ${category} -> ${subcategory} <span class="remove-item">&times;</span>
-                </div>
-            `);
-        });
+      // Select a subcategory
+      $(document).on('click', '.subcategory-item', function() {
+          let category = $('#ProductCategory').val();
+          let categoryid = $(this).get(0).getAttribute('value');
+          let subcategory = $(this).text();
+          $('#SubCategory').val('');
+          $('#ProductCategory').val('');
+          $('#subCategoryList').hide();
+          
+          // Display selected categories and subcategories
+          $('#selectedCategories').append(`
+              <div class="selected-item">
+                <input type="hidden" name="selected-category[]" value="${categoryid}">
+                ${category} -> ${subcategory} <span class="remove-item">&times;</span>
+              </div>
+          `);
+      });
 
-        // Remove selected item
-        $(document).on('click', '.remove-item', function() {
-            $(this).parent().remove();
-        });
-    });
+      // Remove selected item
+      $(document).on('click', '.remove-item', function() {
+          $(this).parent().remove();
+      });
+  });
 
-    fileInput.addEventListener('change', function() {
-        const file = this.files[0];
-        if (file) {
-            const img = new Image();
-            img.src = URL.createObjectURL(file);
-            
-            img.onload = function() {
-                const width = img.naturalWidth;
-                const height = img.naturalHeight;
+document.addEventListener('DOMContentLoaded', function() {
+    const addFrom = document.getElementById('addProductForm');
+    addFrom.addEventListener('submit', function(event) {
+      // Get all hidden inputs with name 'selected-category[]'
+      var selectedCategories = document.getElementsByName('selected-category[]');
 
-                // Check for minimum dimensions
-                if (width < 800 || height < 800) {
-                    alert("Image dimensions must be at least 800x800 pixels.");
-                    fileInput.value = ''; // Clear the input
-                    preview.innerHTML = ''; // Clear the preview
-                }else if (file.size < 100 * 1024) {
-                    alert("File size must be greater than 100KB.");
-                    fileInput.value = ''; // Clear the input
-                    preview.innerHTML = ''; // Clear the preview
-                }else {
-                    // Display the image preview
-                    preview.innerHTML = `<img src="${img.src}" alt="Image Preview" style="max-width: 300px; max-height: 300px;" />`;
-                }
-            };
+     // Check if at least one category is selected
+      var isSelected = false;
+      for (var i = 0; i < selectedCategories.length; i++) {
+          if (selectedCategories[i].value) { // Check if the value is set
+              isSelected = true;
+              break;
+          }
+      }
 
-            img.onerror = function() {
-                alert("There was an error loading the image.");
-            };
-        }
-    });
+      // If no category is selected, prevent submission and show an error message
+      if (!isSelected) {
+          event.preventDefault(); // Prevent form submission
+          document.getElementById('errorMessage').innerText = 'Please select at least one category.';
+          document.getElementById('errorMessage').style.display = 'block'; // Show error message
+      } else {
+          document.getElementById('errorMessage').style.display = 'none'; // Hide error message if valid
+      }
+  }); 
 
-// .... image test........
-
+});
 </script>

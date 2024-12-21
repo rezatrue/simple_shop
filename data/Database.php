@@ -404,7 +404,7 @@ class Database {
     public function queryFeaturedList() {
         // SQL query to select data
         $sql = "SELECT * FROM products WHERE p_is_featured = TRUE";    
-        $result = $this->query($sql);    
+        $result = $this->query($sql); 
         return $result;
 
     }

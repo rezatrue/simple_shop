@@ -13,7 +13,7 @@
             <img src="<?php
                         $noimage = true;
                         if($row['p_images']){
-                        foreach($row['p_images'] as $img){
+                        foreach(json_decode($row['p_images'], true) as $img){
                             if($img != null){
                                     echo $img;
                                     $noimage = false;
