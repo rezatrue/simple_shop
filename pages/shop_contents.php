@@ -74,6 +74,8 @@ $itemsPerPage = 6; // Items per page
                                 }
                                 
                             }
+                            $cat_subcat[] =  ['subcats'=>$subcats ];
+                            include('single_category_menu.php');
                         } 
                     ?>
                 </ul>    

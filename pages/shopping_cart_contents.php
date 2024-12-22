@@ -68,6 +68,8 @@ $totalCost = 0;
                                 }
                                 
                             }
+                            $cat_subcat[] =  ['subcats'=>$subcats ];
+                            include('single_category_menu.php');
                         } 
                     ?>
                 </ul>    

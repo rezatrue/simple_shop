@@ -471,7 +471,6 @@ class Database {
         return $categories;
     }
 
- 
     public function queryCountCategory() {
         // SQL query to select data
         $sql = "SELECT COUNT(*) AS total_count FROM categories";

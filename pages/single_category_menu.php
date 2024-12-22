@@ -6,6 +6,7 @@
     <ul id="collapseThree" class="collapse list-unstyled pl-3 list-group list-group-flush">
         <?php 
         foreach ($cat_subcat[1]['subcats'] as $subcategory) {
+            
             if (isset($subcategory['sub_cat_name'])) {
                  echo '<li class="list-group-item d-flex align-items-center">' . 
                  '<span class="text-success me-2">&#10003;</span>' . // Green tick mark
