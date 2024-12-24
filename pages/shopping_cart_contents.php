@@ -14,85 +14,37 @@ $totalCost = 0;
 
 ?>
 
-<!-- Modal -->
-    <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="w-100 pt-1 mb-5 text-right">
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="" method="get" class="modal-content modal-body border-0 p-0">
-                <div class="input-group mb-2">
-                    <input type="text" class="form-control" id="inputModalSearch" name="q" placeholder="Search ...">
-                    <button type="submit" class="input-group-text bg-success text-light">
-                        <i class="fa fa-fw fa-search text-white"></i>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
+<!-- Start Content -->
+<div class="container py-5">
+    <div class="row">
 
-
-    <!-- Start Content -->
-    <div class="container py-5">
-        <div class="row">
-<!--  side bar starts here -->
-            <div class="col-lg-3">
-            <h1 class="h5 pb-2">For more go to Categories</h1>
-                <ul class="list-unstyled templatemo-accordion">
-                    <?php
-                        $db = new Database();
-                        $data = $db->getCategoryList(); 
-                        $db->close();
-                        if (!empty($data)){
-                            $lastId = 0;
-                            $cat_subcat = [];
-                            $subcats = [];
-                            foreach ($data as $row) {
-                                if ($lastId == 0){
-                                    $lastId = $row['cat_id'];
-                                    $cat_subcat[] =  ['cat_name'=>$row['cat_name']];
-                                    $subcats[] = ['sub_cat_name'=>$row['sub_cat_name'], 'sub_cat_id'=>$row['sub_cat_id']] ;
-                                }
-                                elseif ($lastId == $row['cat_id']){
-                                    $subcats[] = ['sub_cat_name'=>$row['sub_cat_name'], 'sub_cat_id'=>$row['sub_cat_id']] ;
-                                }     
-                                elseif ($lastId != $row['cat_id']){
-                                    $cat_subcat[] =  ['subcats'=>$subcats ];
-                                    include('single_category_menu.php');
-
-                                    $cat_subcat = [];
-                                    $subcats = [];
-                                    $lastId = $row['cat_id'];
-                                    $cat_subcat[] =  ['cat_name'=>$row['cat_name']];
-                                    $subcats[] = ['sub_cat_name'=>$row['sub_cat_name'], 'sub_cat_id'=>$row['sub_cat_id']] ;
-                                }
-                                
-                            }
-                            $cat_subcat[] =  ['subcats'=>$subcats ];
-                            include('single_category_menu.php');
-                        } 
-                    ?>
-                </ul>    
-            </div>
-<!--  side bar ends here -->
-
-            <div class="col-lg-9">
-                <div class="row">
-                    <div class="col-md-6">
-                        <ul class="list-inline shop-top-menu pb-3 pt-1">
-                            <li class="list-inline-item">
-                                <a class="h2 text-dark text-decoration-none mr-3" href="#"><strong>Shopping Cart Items :</strong></a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="col-md-6 pb-4">
-                        <div class="d-flex">
-                            <select class="form-control">
-                                <option>Search by name</option>
-                            </select>
+        <div class="col-lg-9">     
+            <!-- Voice List section starts -->
+            <div class="row">
+                <div class="col-12 col-sm-6">
+                <div class="card card-primary p-1">
+                    <div class="card-header bg-success text-white">
+                        <div class="row">
+                            <div class="col text-center">
+                                <h3 class="card-title mb-1">Upload List</h3>
+                            </div>
                         </div>
-                    </div>
+                    </div>   
+                </div>    
                 </div>
+                <div class="col-12 col-sm-6">
+                <div class="card card-primary p-1">
+                    <div class="card-header bg-success text-white">
+                        <div class="row">
+                            <div class="col text-center">
+                                <h3 class="card-title mb-1">Add Voice</h3>
+                            </div>
+                        </div>
+                    </div> 
+                </div>    
+                </div>
+            </div>          
+            <!-- Voice List section ends -->     
             <!-- product carts starts -->
                 <div class="row">            
                     <?php 
@@ -110,34 +62,79 @@ $totalCost = 0;
                     
                     ?>
                 </div>
-            <!-- product carts ebds -->     
-                    <!-- <total counts> -->
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="card position-relative">
-                                <div class="card-header d-flex justify-content-between align-items-center bg-success text-white">
-                                    <?php if($totalItems > 0){
-                                            echo '<h5 class="mb-0">Total Item: <string id="total-items">' . $totalItems . '</string> &   Total Cost: <string id="total-costs">' . $totalCost . '</string></h5>';  
-                                            echo '<form action="./data/submit_order.php" method="POST">';                                     
-                                            echo '<button class="btn btn-primary btn-lg text-center" type="submit" name="submit" value="order">Submit</button>';
-                                            echo '</form>'; 
-                                        }
-                                        else{
-                                            echo '<h5 class="mb-0 text-center">No Item is added to the cart.</h5>';
-                                        }
-                                    ?>
-                                </div>
-                            </div>  
-                        </div>   
-                    </div>
-                    <!-- <total counts> -->
-            </div>
-
+            <!-- product carts ends -->     
+                <!-- <total counts> -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card position-relative">
+                            
+                            <?php if($totalItems > 0){
+                                    echo '<div class="card-header d-flex justify-content-between align-items-center bg-success text-white">';
+                                    echo '<h5 class="mb-0">Total Item: <string id="total-items">' . $totalItems . '</string> &   Total Cost: <string id="total-costs">' . $totalCost . '</string></h5>';  
+                                    echo '<form action="./data/submit_order.php" method="POST">';                                     
+                                    echo '<button class="btn btn-primary btn-lg text-center" type="submit" name="submit" value="order">Submit</button>';
+                                    echo '</form>';
+                                    echo '</div>';
+                                    echo '<div class="mb-0">* Voice & Upload list items price will be added to the total price</div>'; 
+                                }
+                                else{
+                                    echo '<div class="card-header bg-secondary text-white">';
+                                    echo '<h5 class="mb-0 text-center">No Item is added to the cart.</h5>';
+                                    echo '</div>';
+                                }
+                            ?>
+                        </div>
+                          
+                    </div>   
+                </div>
+                <!-- <total counts> -->
         </div>
-    </div>
-    <!-- End Content -->
+        <!--  side bar starts here -->
+        <div class="col-lg-3">
+        <h1 class="h4 pb-2">Categories</h1>
+            <ul class="list-unstyled templatemo-accordion">
+                <?php
+                    $db = new Database();
+                    $data = $db->getCategoryList(); 
+                    $db->close();
+                    if (!empty($data)){
+                        $lastId = 0;
+                        $cat_subcat = [];
+                        $subcats = [];
+                        foreach ($data as $row) {
+                            if ($lastId == 0){
+                                $lastId = $row['cat_id'];
+                                $cat_subcat[] =  ['cat_name'=>$row['cat_name']];
+                                $subcats[] = ['sub_cat_name'=>$row['sub_cat_name'], 'sub_cat_id'=>$row['sub_cat_id']] ;
+                            }
+                            elseif ($lastId == $row['cat_id']){
+                                $subcats[] = ['sub_cat_name'=>$row['sub_cat_name'], 'sub_cat_id'=>$row['sub_cat_id']] ;
+                            }     
+                            elseif ($lastId != $row['cat_id']){
+                                $cat_subcat[] =  ['subcats'=>$subcats ];
+                                include('single_category_menu.php');
 
-<!-- End Modal -->
+                                $cat_subcat = [];
+                                $subcats = [];
+                                $lastId = $row['cat_id'];
+                                $cat_subcat[] =  ['cat_name'=>$row['cat_name']];
+                                $subcats[] = ['sub_cat_name'=>$row['sub_cat_name'], 'sub_cat_id'=>$row['sub_cat_id']] ;
+                            }
+                            
+                        }
+                        $cat_subcat[] =  ['subcats'=>$subcats ];
+                        include('single_category_menu.php');
+                    } 
+                ?>
+            </ul>    
+        </div>
+        <!--  side bar ends here -->
+
+
+    </div>
+</div>
+<!-- End Content -->
+
 <script>
 
 function changeQuantity(id, change) {

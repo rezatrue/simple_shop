@@ -31,7 +31,18 @@ https://templatemo.com/tm-559-zay-shop
 
 -->
 </head>
-<?php session_start(); // Start the session
+<?php 
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
+if (isset($_GET['mob'])){
+    $mobile = $_GET['mob'];
+    if($mobile){
+        $_SESSION['mob'] =  $mobile;   
+    }
+} 
 
 // Initialize cart if it doesn't exist
 if (!isset($_SESSION['cart'])) {
