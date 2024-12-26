@@ -49,10 +49,6 @@ class Database {
             return;
         $sql = 'SELECT u_id, u_full_name, u_role FROM user WHERE u_name = "' .$user. '" AND u_password = "' .$password. '"' ;
         $result = $this->fetchAll($this->query($sql));
-        // echo '<pre>';
-        // print_r($result);
-        // echo '<pre/>';
-        // exit();
         if(!$result)
             return null;
         $user = [
@@ -861,8 +857,17 @@ public function addOderItem($o_id, $u_ip, $p_id, $o_unit, $p_size, $c_notes) {
         return $orderDetails; 
     }
 
-   
+    public function deliveryDetails($o_id, $name, $phone, $address, $notes) {
 
+        $sql = "INSERT INTO delivery_details (o_id, o_name, o_phone, o_address, o_notes) VALUES (?,?,?,?,?)";
+        $stmt = $this->prepare($sql);
+        $stmt->bind_param("sssss", $o_id, $name, $phone, $address, $notes); // d for daouble & i for number
+        if ($stmt->execute()) {
+            return true; // Or any other success indication
+        } else {
+            return false;
+        }
+    }
 
 }
 

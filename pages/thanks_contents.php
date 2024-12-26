@@ -1,33 +1,47 @@
-<style>
-    .page-item.active .page-link{
-    background-color: #69bb7e;
-    }
-</style>    
-
 <?php
 
 // Include the Database class
 require './data/Database.php'; // Adjust the path as necessary
 
+$show_msg = 0;
+$order_id = null;
+if(isset($_GET['order_id']))
+    $order_id = $_GET['order_id'];
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $name = '';
+    if (isset($_POST['name']))
+        $name = $_POST['name'];
+    if (isset($_POST['o_id']))
+        $o_id = $_POST['o_id'];
+    if (isset($_POST['phone']))
+        $phone = $_POST['phone'];
+    $address = '';
+    if (isset($_POST['address']))
+        $address = $_POST['address'];
+    $notes = '';
+    if (isset($_POST['notes']))
+        $notes = $_POST['notes'];
+
+    // echo '<pre>';   
+    // print_r($phone);
+    // echo '</pre>';
+    // exit(); 
+    if (isset($_POST['o_id']) && $_POST['o_id'] != null && isset($_POST['phone']) && $_POST['phone'] != null ){
+        $db = new Database();
+        $result = $db->deliveryDetails($o_id, $name, $phone, $address, $notes);
+        $db->close();
+        if($result)
+            $show_msg = 1;
+        else
+            $show_msg = 0;
+    }else{
+        $show_msg = 0;
+    }
+    
+}
+
 ?>
-
-<!-- Modal -->
-    <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="w-100 pt-1 mb-5 text-right">
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="" method="get" class="modal-content modal-body border-0 p-0">
-                <div class="input-group mb-2">
-                    <input type="text" class="form-control" id="inputModalSearch" name="q" placeholder="Search ...">
-                    <button type="submit" class="input-group-text bg-success text-light">
-                        <i class="fa fa-fw fa-search text-white"></i>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
 
     <!-- Start Content -->
     <div class="container py-5">
@@ -63,8 +77,10 @@ require './data/Database.php'; // Adjust the path as necessary
                                     $cat_subcat[] =  ['cat_name'=>$row['cat_name']];
                                     $subcats[] = ['sub_cat_name'=>$row['sub_cat_name'], 'sub_cat_id'=>$row['sub_cat_id']] ;
                                 }
-                                
+
                             }
+                            $cat_subcat[] =  ['subcats'=>$subcats ];
+                            include('single_category_menu.php');
                         } 
                     ?>
                 </ul>    
@@ -72,36 +88,66 @@ require './data/Database.php'; // Adjust the path as necessary
 <!--  side bar ends here -->
 
             <div class="col-lg-9">
+                <?php if($show_msg === 1){ 
+                    echo '<div class="row">
+                            <div class="col-md-6">
+                                <ul class="list-inline shop-top-menu pb-3 pt-1">
+                                    <li class="list-inline-item">
+                                        <h2 class="mr-3 text-success" >Thank you : </h2>
+                                        <p class="text-success"><strong> Your order is now placed to our system.</strong></p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>';
+                    } ?>
+
                 <div class="row">
-                    <div class="col-md-6">
-                        <ul class="list-inline shop-top-menu pb-3 pt-1">
-                            <li class="list-inline-item">
-                                <a class="h2 text-dark text-decoration-none mr-3" href="#"><strong>Thank you :</strong></a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="col-md-6 pb-4">
-                        <div class="d-flex">
-                            <select class="form-control">
-                                <option>Search by name</option>
-                            </select>
+                    <div class="col-12 col-sm-6">
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <h3 class="card-title">Please Enter Delivery Details</h3>
+                            </div>
+                            <!-- login form start -->
+                            <form action="thank_you.php" method="post">
+                                <div class="card-body">
+                                    <input type="hidden" class="form-control" id="o_id" name="o_id" value="<?php if($order_id) echo $order_id; ?>" required>
+                                <div class="form-group">
+                                    <label for="Username">Name</label>
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter Your Name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="Password">Phone*</label>
+                                    <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter Contact Phone" >
+                                </div>
+                                <div class="form-group">
+                                    <label for="Password">Address</label>
+                                    <input type="text" class="form-control" id="address" name="address" placeholder="Enter Dalivery Address">
+                                </div>
+                                <div class="form-group">
+                                    <label for="Password">Notes</label>
+                                    <input type="text" class="form-control" id="notes" name="notes" placeholder="Enter notes">
+                                </div>
+                                <div class="form-group">
+                                    <input type="submit" value="Submit">
+                                </div>            
+                                </div>
+                            </form>  
+                            <!-- login form ends -->
                         </div>
                     </div>
                 </div>
-            <!-- product carts starts -->    
-                <div class="row">            
-                    <p>Your order is now placed to our system.</p>
-                    <p>Please do contact to 01700000000 for delivery details. <br>
-                        [as we don't keep any of your personal infomation to our system]</p>
-                    <p>Please do mention your order number <?php echo htmlspecialchars($_GET['order_id']); ?>.</p>
+            <!-- page contents starts -->    
+                <div class="row mr-3">            
+                    <p>OR<p>
+                    <p>Contact to 01700000000 with delivery details to Confirm your Order. <br>
+                    <p>Please do mention your order number <strong><?php if($order_id) echo $order_id; ?></strong>.</p>
                     <p>Go back for Shipping -> <a href='shop.php'>Click here</p>
                 </div>
-            <!-- product carts ebds -->     
+                
+            <!-- page contents ends -->     
 
-            </div>
+            </div>  
 
         </div>
     </div>
     <!-- End Content -->
-
-<!-- End Modal -->

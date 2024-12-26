@@ -114,10 +114,6 @@ $itemsPerPage = 6; // Items per page
                     if(isset($_GET['cat'])){
                         if($db->isMainCat($cat_id) === 1){
                             $result = $db->queryAllSubcatProductsForCat($cat_id, $page, $itemsPerPage);
-                            // echo '<pre>';
-                            // print_r($result);
-                            // echo "</pre>";
-                            // exit();
                             $totalItems = $db->productCountForMainCat($cat_id);
                         }else{
                             $result = $db->queryForRelatedProduct('visitor', $cat_id, $page, $itemsPerPage);

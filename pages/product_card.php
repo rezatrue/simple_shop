@@ -14,7 +14,7 @@
                                                             if($noimage) echo 'assets/img/prod/dumy.png';?>" alt="<?php echo htmlspecialchars($row['p_name']); ?>">
             <div class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
                 <ul class="list-unstyled">
-                    <li><a class="btn btn-success text-white" href="product_details.php?id=<?php echo htmlspecialchars($row['p_id']); ?>"><i class="far fa-heart"></i></a></li>
+                    <!-- <li><a class="btn btn-success text-white" href="product_details.php?id=<?php echo htmlspecialchars($row['p_id']); ?>"><i class="far fa-heart"></i></a></li> -->
                     <li><a class="btn btn-success text-white mt-2" href="product_details.php?id=<?php echo htmlspecialchars($row['p_id']); ?>"><i class="far fa-eye"></i></a></li>
                     <form action="./data/manage_cart.php" method="POST">
                         <input type="hidden" name="product-id" value="<?php echo $row['p_id']; ?>">
