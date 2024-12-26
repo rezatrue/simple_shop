@@ -86,8 +86,10 @@ class Database {
             product_categories pc
         JOIN 
             products p ON pc.p_id = p.p_id
-        where 
-            pc.parent_cat_id = " . $cat_id . " 
+        JOIN 
+            categories c ON pc.cat_id = c.cat_id             
+        WHERE 
+            c.parent_cat_id = " . $cat_id . " 
         And
             p.p_is_show = True";
 
@@ -177,10 +179,12 @@ class Database {
         FROM 
             products p
         JOIN 
-            product_categories pc ON p.p_id = pc.p_id   
+            product_categories pc ON p.p_id = pc.p_id
+        JOIN 
+            categories c ON pc.cat_id = c.cat_id          
         WHERE 
-            pc.parent_cat_id = " . $cat_id . "
-        AND
+            c.parent_cat_id = " . $cat_id .
+        " AND
             p.p_is_show = true     
         LIMIT "
             . $itemsPerPage .
@@ -209,7 +213,7 @@ class Database {
         // echo '<pre>';
         // print_r($relatedProductList);
         // echo '<pre/>';
-        //exit();
+        // exit();
         return $relatedProductList;
 
     }
@@ -419,9 +423,11 @@ class Database {
 
     public function isMainCat($cat_id) {
         // SQL query to select data
-        $sql = "SELECT COUNT(*) FROM categories WHERE cat_id = '" . $cat_id . "' AND parent_cat_id = '0'";    
+        $sql = "SELECT COUNT(cat_name) as row_count FROM categories WHERE cat_id = '" . $cat_id . "' AND parent_cat_id = '0'";    
         $result = $this->query($sql);
-        if($result)    
+        $row = mysqli_fetch_assoc($result);
+        $rowCount = (int)$row['row_count'];
+        if($rowCount > 0)
             return 1;
         else
             return 0;

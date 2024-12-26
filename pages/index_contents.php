@@ -113,7 +113,6 @@ require './data/Database.php'; // Adjust the path as necessary
                 // Create an instance of the Database class
                 $db = new Database();
                 $result = $db->queryIsCatOfMonth();
-
                 // Check if there are results and fetch data
                 if ($result && $result->num_rows > 0) {
                     // Fetch all results as an associative array
