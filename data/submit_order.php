@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     if ($generatedUniqueId == null){
                         $generatedUniqueId =  uniqid();
                     }
-                    $db->addOderItem($generatedUniqueId, $user_ip, $id, (int)$item['quantity'], $item['size'], $item['notes']); // 
+                    $db->addOderItem($generatedUniqueId, '', $user_ip, $id, (int)$item['quantity'], $item['size'], $item['notes']); // 
                     // Remove products from session
                     if (isset($_SESSION['cart'][$id])) {
                         unset($_SESSION['cart'][$id]);

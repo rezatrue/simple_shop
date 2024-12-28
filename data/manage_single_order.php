@@ -9,7 +9,13 @@ require 'Database.php';
         $search_unit = isset($_POST['search-unit']) ? floatval($_POST['search-unit']) : 0;
         $search_size = isset($_POST['search-size']) ? trim($_POST['search-size']) : '';
         $search_comment = isset($_POST['search-comment']) ? trim($_POST['search-comment']) : '';
-    
+        $o_date = '';
+        if($o_id){
+            $db = new Database();
+            $o_date = $db->getOrderDateTime($o_id);
+            $db->close();
+        }
+ 
         // Validate input fields
         if (!empty($search_name) && !empty($search_unit) ) {
 
@@ -19,7 +25,7 @@ require 'Database.php';
             }
 
             $db = new Database();
-            $new_o_id =  $db->addOderItem($o_id, $user_ip, $search_pid, $search_unit, $search_size, $search_comment);
+            $new_o_id =  $db->addOderItem($o_id, $o_date ,$user_ip, $search_pid, $search_unit, $search_size, $search_comment);
             $db->close();
 
         }

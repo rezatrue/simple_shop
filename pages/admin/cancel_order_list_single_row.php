@@ -17,13 +17,9 @@
 
              <td class="name">
                   <?php foreach($row['c_items'] as $item){
-                    echo '<strong>'.htmlspecialchars($item).'</strong> </br>'; 
+                    echo '<strong class="bg-secondary bg-gradient">'.htmlspecialchars($item).'</strong> </br>'; 
                   }
                   ?>
-             </td>
-
-             <td class="name">
-                  <?php echo htmlspecialchars($row['o_date']); ?>
              </td>
 
              <td class="name">

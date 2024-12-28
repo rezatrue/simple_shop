@@ -684,14 +684,27 @@ class Database {
     }
 
 // SQL query for admin
-
-public function addOderItem($o_id, $u_ip, $p_id, $o_unit, $p_size, $c_notes) {
- 
-    $sql = "INSERT INTO order_table ( o_id,  o_date , u_ip ,  p_id ,  o_unit ,  p_size ,  c_notes ) 
-            VALUES ('" . $o_id . "', now() ,'" . $u_ip . "','". $p_id . "','". $o_unit . "','". $p_size . "','". $c_notes . "')";
-            echo $sql;
+public function getOrderDateTime($o_id) {
+    $sql = "SELECT o_date FROM order_table WHERE o_id = '" . $o_id . "'";
     $result = $this->query($sql);
+        
+    if ($result) { 
+        $row = mysqli_fetch_assoc($result);
+        $o_date = $row['o_date']; 
+        return $o_date;
+    }else
+        return '';
+}
 
+public function addOderItem($o_id, $o_date, $u_ip, $p_id, $o_unit, $p_size, $c_notes) {
+
+    if($o_date)
+        $sql = "INSERT INTO order_table ( o_id,  o_date , u_ip ,  p_id ,  o_unit ,  p_size ,  c_notes ) 
+            VALUES ('" . $o_id . "', '". $o_date . "' ,'" . $u_ip . "','". $p_id . "','". $o_unit . "','". $p_size . "','". $c_notes . "')";
+    else
+        $sql = "INSERT INTO order_table ( o_id,  o_date , u_ip ,  p_id ,  o_unit ,  p_size ,  c_notes ) 
+            VALUES ('" . $o_id . "', now() ,'" . $u_ip . "','". $p_id . "','". $o_unit . "','". $p_size . "','". $c_notes . "')";        
+    $result = $this->query($sql);
     if ($result) {    
         return $o_id;
     }else

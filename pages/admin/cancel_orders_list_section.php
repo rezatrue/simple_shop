@@ -61,7 +61,6 @@ $db->close();
             <th><h5>Order ID</h5></th>
             <th><h5>Date-Time</h5></th>
             <th><h5>Items</h5></th>
-            <th><h5>Amount</h5></th>
             <th><h5>Name</h5></th>
             <th><h5>Phone</h5></th>
             <th><h5>Address</h5></th>
