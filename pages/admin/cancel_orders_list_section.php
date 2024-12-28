@@ -16,11 +16,11 @@ $itemsPerPage = 10; // Items per page
 $db = new Database();
 
 if (isset($_GET['o_id'])){
-    $result = $db->queryForPartialOrderIdListPage($like_o_id, $page, $itemsPerPage);
-    $totalItems = $db->queryCountForPartialOrderIdListPage($like_o_id);
+    $result = $db->partialCancelOrderIdListPage($like_o_id, $page, $itemsPerPage);
+    $totalItems = $db->countForPartialCancelOrderIdListPage($like_o_id);
 } else{
-    $result = $db->queryForOrderListPage($page, $itemsPerPage);
-    $totalItems = $db->queryCountForOrderListPage();
+    $result = $db->cancelOrderListPage($page, $itemsPerPage);
+    $totalItems = $db->countForCancalOrderListPage();
 }
 
 // Close the database connection
@@ -32,7 +32,7 @@ $db->close();
 <!-- <div class="table-responsive mb-2">
     <tbody>
         <tr> -->
-            <form action="order_list.php" method="get" id="searchForm">
+            <form action="cancel_orders.php" method="get" id="searchForm">
             <div class="row">
                 <div class="col-12 col-sm-4">
                     Order ID : <input id="o_id" name="o_id"></input>
@@ -59,9 +59,8 @@ $db->close();
           <thead class="table-light">
             <tr>
             <th><h5>Order ID</h5></th>
-            <th><h5>Details</h5></th>
             <th><h5>Date-Time</h5></th>
-            <th><h5>IP</h5></th>
+            <th><h5>Items</h5></th>
             <th><h5>Amount</h5></th>
             <th><h5>Name</h5></th>
             <th><h5>Phone</h5></th>
@@ -74,7 +73,7 @@ $db->close();
                     <?php 
                         if (!empty($result['order'])) {
                             foreach ($result['order'] as $row) {
-                                include('./pages/admin/order_list_single_row.php');
+                                include('./pages/admin/cancel_order_list_single_row.php');
                             }
                         } else {
                             echo "0 results";

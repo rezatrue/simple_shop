@@ -22,11 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $notes = '';
     if (isset($_POST['notes']))
         $notes = $_POST['notes'];
-
-    // echo '<pre>';   
-    // print_r($phone);
-    // echo '</pre>';
-    // exit(); 
+ 
     if (isset($_POST['o_id']) && $_POST['o_id'] != null && isset($_POST['phone']) && $_POST['phone'] != null ){
         $db = new Database();
         $result = $db->deliveryDetails($o_id, $name, $phone, $address, $notes);
@@ -117,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 </div>
                                 <div class="form-group">
                                     <label for="Password">Phone*</label>
-                                    <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter Contact Phone" >
+                                    <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter Contact Phone" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="Password">Address</label>

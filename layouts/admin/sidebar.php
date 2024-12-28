@@ -54,7 +54,13 @@
               <i class="nav-icon fas fa-columns"></i>
               <p>Order List</p>
             </a>
-          </li>     
+          </li> 
+          <li class="nav-item">
+            <a href="confirm_orders.php" class="nav-link">
+              <i class="nav-icon fas fa-check"></i>
+              <p>Confirm Orders</p>
+            </a>
+          </li>    
           <li class="nav-item">
             <a href="product_list.php" class="nav-link">
               <i class="nav-icon fas fa-th"></i>
@@ -91,7 +97,12 @@
               </li>
             </ul>
           </li>
-
+          <li class="nav-item">
+            <a href="cancel_orders.php" class="nav-link">
+              <i class="nav-icon fas fa-ban"></i>
+              <p>Cancel Orders</p>
+            </a>
+          </li>
         </ul>
       </nav>
       <!-- /.sidebar-menu -->

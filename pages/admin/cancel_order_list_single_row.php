@@ -10,20 +10,20 @@
              <td class="name">
                   <?php echo htmlspecialchars($row['o_id']); ?>
              </td>
-             <td class="tool">
-                <a href="order_details.php?o_id=<?php echo htmlspecialchars($row['o_id']); ?>">Open</a>
-             </td>
                 
              <td class="name">
                   <?php echo htmlspecialchars($row['o_date']); ?>
              </td>
 
              <td class="name">
-                  <?php echo htmlspecialchars($row['u_ip']); ?>
+                  <?php foreach($row['c_items'] as $item){
+                    echo '<strong>'.htmlspecialchars($item).'</strong> </br>'; 
+                  }
+                  ?>
              </td>
 
              <td class="name">
-                  <?php echo htmlspecialchars($row['order_amount']); ?>
+                  <?php echo htmlspecialchars($row['o_date']); ?>
              </td>
 
              <td class="name">
@@ -39,7 +39,7 @@
              </td>
 
              <td class="name">
-                  <?php echo htmlspecialchars($row['o_notes']); ?>
+                  <?php echo htmlspecialchars($row['c_notes']); ?>
              </td>
 
            </tr>

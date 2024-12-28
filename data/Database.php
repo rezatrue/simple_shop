@@ -705,13 +705,19 @@ public function addOderItem($o_id, $u_ip, $p_id, $o_unit, $p_size, $c_notes) {
                     o.o_id,
                     o.o_date,
                     o.u_ip,
+                    dd.o_name,
+                    dd.o_phone,
+                    dd.o_address,
+                    dd.o_notes,
                     SUM(o.o_unit * p.p_price) AS order_amount
                 FROM 
                     order_table o
                 JOIN 
                     products p ON o.p_id = p.p_id
+                LEFT JOIN 
+                    delivery_details dd ON o.o_id = dd.o_id    
                 GROUP BY 
-                    o.o_id 
+                    o.o_id, o.o_date, dd.o_name, dd.o_phone, dd.o_address, dd.o_notes 
                 ORDER BY 
                     o.o_date DESC
                 LIMIT " 
@@ -732,6 +738,10 @@ public function addOderItem($o_id, $u_ip, $p_id, $o_unit, $p_size, $c_notes) {
                         'o_id' => $row['o_id'],
                         'o_date' => $row['o_date'],
                         'u_ip' => $row['u_ip'],
+                        'o_name' => $row['o_name'],
+                        'o_phone' => $row['o_phone'],
+                        'o_address' => $row['o_address'],
+                        'o_notes' => $row['o_notes'],
                         'order_amount' => $row['order_amount']
                     ];
                 }  
@@ -761,15 +771,21 @@ public function addOderItem($o_id, $u_ip, $p_id, $o_unit, $p_size, $c_notes) {
                     o.o_id,
                     o.o_date,
                     o.u_ip,
+                    dd.o_name,
+                    dd.o_phone,
+                    dd.o_address,
+                    dd.o_notes,
                     SUM(o.o_unit * p.p_price) AS order_amount
                 FROM 
                     order_table o
                 JOIN 
                     products p ON o.p_id = p.p_id
+                LEFT JOIN 
+                    delivery_details dd ON o.o_id = dd.o_id    
                 WHERE 
-                    o_id LIKE '%" . $like_o_id . "%'     
+                    o.o_id LIKE '%" . $like_o_id . "%'     
                 GROUP BY 
-                    o.o_id, o.o_date
+                    o.o_id, o.o_date, dd.o_name, dd.o_phone, dd.o_address, dd.o_notes
                 ORDER BY 
                     o.o_date ASC
                 LIMIT " 
@@ -790,6 +806,10 @@ public function addOderItem($o_id, $u_ip, $p_id, $o_unit, $p_size, $c_notes) {
                         'o_id' => $row['o_id'],
                         'o_date' => $row['o_date'],
                         'u_ip' => $row['u_ip'],
+                        'o_name' => $row['o_name'],
+                        'o_phone' => $row['o_phone'],
+                        'o_address' => $row['o_address'],
+                        'o_notes' => $row['o_notes'],
                         'order_amount' => $row['order_amount']
                     ];
                 }  
@@ -868,6 +888,188 @@ public function addOderItem($o_id, $u_ip, $p_id, $o_unit, $p_size, $c_notes) {
             return false;
         }
     }
+
+    public function cancelOrder($o_id, $notes) {
+        $sql = "SELECT * FROM delivery_details WHERE o_id = ?";
+        $stmt = $this->prepare($sql);
+        $stmt->bind_param("s", $o_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $name = '';
+        $phone = '';
+        $address = '';
+        while ($row = $result->fetch_assoc()) {
+            $name = $row['o_name'] ;
+            $phone = $row['o_phone'];
+            $address = $row['o_address'];
+        }
+        $stmt->close();
+
+        $sql1 = "SELECT 
+                ot.p_id,
+                ot.o_unit,
+                ot.p_size,
+                ot.c_notes,
+                ot.o_date,
+                p.p_name,
+                p.p_price,
+                (ot.o_unit * p.p_price) AS total_amount
+            FROM 
+                order_table ot
+            INNER JOIN 
+                products p ON ot.p_id = p.p_id
+            WHERE
+                ot.o_id = ? ORDER BY ot.o_date DESC";    
+        
+        $stmt1 = $this->prepare($sql1);
+        $stmt1->bind_param("s", $o_id);
+        $stmt1->execute();
+        $result1 = $stmt1->get_result();
+        $items = [];
+        $date = '';
+        while ($row = $result1->fetch_assoc()) {
+            if(!$date) $date = $row['o_date'];
+            $items[] = "(" . $row['p_id'] . ")-" . $row['p_name'] . "[" . $row['p_size'] . "]-" 
+            . $row['p_price'] ."x" . $row['o_unit'] . "=" . $row['total_amount'] . "[" . $row['c_notes'] . "]";
+        }
+        $stmt1->close();
+        $jsonItems = json_encode($items);
+
+        $sql2 = "INSERT INTO cancel_order (o_id, o_date, o_name, o_phone, o_address, c_notes, c_items) 
+                        VALUES (?,?,?,?,?,?,?)";
+        $stmt2 = $this->prepare($sql2);
+        $stmt2->bind_param("sssssss", $o_id, $date, $name, $phone, $address, $notes, $jsonItems);
+        //$stmt2->execute();        
+        //$result = $stmt2->get_result();
+
+        if($stmt2->execute()){
+            $sql3 = "DELETE FROM delivery_details WHERE o_id = '" . $o_id . "'";
+            $this->query($sql3);
+            $sql4 = "DELETE FROM order_table WHERE o_id = '" . $o_id . "'";
+            $this->query($sql4);
+        }
+        
+    }
+
+    public function cancelOrderListPage($page, $itemsPerPage) { // queryForOrderListPage
+        $offset = ($page - 1) * $itemsPerPage ;
+        $sql = "SELECT 
+                    co.o_id,
+                    co.o_date,
+                    co.o_name,
+                    co.o_phone,
+                    co.o_address,
+                    co.c_notes,
+                    co.c_items
+                FROM 
+                    cancel_order co
+                ORDER BY 
+                    co.o_date DESC
+                LIMIT " 
+                    .$itemsPerPage .
+                " OFFSET "
+                    . $offset; 
+                    
+        $result = $this->query($sql);
+
+        $cancelOrderList['order'] = [];
+        if ($result) {
+            // Assuming $result is an associative array of rows
+            foreach ($result as $row) {
+                // Check if the product already exists in the array
+                if (isset($row['o_id'])) {
+                    // Store product name and price
+                    $cancelOrderList['order'][] = [
+                        'o_id' => $row['o_id'],
+                        'o_date' => $row['o_date'],
+                        'o_name' => $row['o_name'],
+                        'o_phone' => $row['o_phone'],
+                        'o_address' => $row['o_address'],
+                        'c_notes' => $row['c_notes'],
+                        'c_items' => json_decode($row['c_items'], true)
+                    ];
+                }  
+            }
+        }
+        // echo '<pre>';
+        // print_r($cancelOrderList);
+        // echo '<pre/>';
+        //exit();
+        return $cancelOrderList; 
+        
+    }
+
+
+    public function countForCancalOrderListPage() { //queryCountForOrderListPage
+        // SQL query to select data
+        $sql = "SELECT COUNT(DISTINCT o_id) AS total_count FROM cancel_order";
+        $result = $this->query($sql);
+        $row = mysqli_fetch_assoc($result);
+        $totalCount = (int)$row['total_count'];
+        return $totalCount;
+        // $totalItems = mysqli_num_rows($result);
+    }
+
+    public function partialCancelOrderIdListPage($like_o_id, $page, $itemsPerPage) { // queryForPartialOrderIdListPage
+        // SQL query to select data
+        $offset = ($page - 1) * $itemsPerPage ;
+        $sql = "SELECT 
+                    co.o_id,
+                    co.o_date,
+                    co.o_name,
+                    co.o_phone,
+                    co.o_address,
+                    co.c_notes,
+                    co.c_items
+                FROM 
+                    cancel_order co    
+                WHERE 
+                    co.o_id LIKE '%" . $like_o_id . "%'  
+                ORDER BY 
+                    co.o_date DESC
+                LIMIT " 
+                    .$itemsPerPage .
+                " OFFSET "
+                    . $offset; 
+                    
+        $result = $this->query($sql);
+
+        $cancelOrderList['order'] = [];
+        if ($result) {
+            // Assuming $result is an associative array of rows
+            foreach ($result as $row) {
+                // Check if the product already exists in the array
+                if (isset($row['o_id'])) {
+                    // Store product name and price
+                    $cancelOrderList['order'][] = [
+                        'o_id' => $row['o_id'],
+                        'o_date' => $row['o_date'],
+                        'o_name' => $row['o_name'],
+                        'o_phone' => $row['o_phone'],
+                        'o_address' => $row['o_address'],
+                        'c_notes' => $row['c_notes'],
+                        'c_items' => json_decode($row['c_items'], true)
+                    ];
+                }  
+            }
+        }
+        // echo '<pre>';
+        // print_r($cancelOrderList);
+        // echo '<pre/>';
+        //exit();
+        return $cancelOrderList; 
+    }
+
+    public function countForPartialCancelOrderIdListPage($like_o_id) { //queryCountForPartialOrderIdListPage
+        // SQL query to select data
+        $sql = "SELECT COUNT(DISTINCT o_id) AS total_count FROM cancel_order WHERE o_id LIKE '%" . $like_o_id . "%'";
+        $result = $this->query($sql);
+        $row = mysqli_fetch_assoc($result);
+        $totalCount = (int)$row['total_count'];
+        return $totalCount;
+        // $totalItems = mysqli_num_rows($result);
+    }
+
 
 }
 
