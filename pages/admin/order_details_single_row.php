@@ -41,6 +41,7 @@
 
           <td class="name">
                <input type="hidden" id="o_id" name="o_id" value="<?php echo $o_id; ?>">
+               <input type="hidden" id="o_date-<?php echo $row['p_id']; ?>" name="o_date-<?php echo $row['p_id']; ?>" value="<?php echo $row['o_date']; ?>">
                <input type="hidden" id="p_id-<?php echo $row['p_id']; ?>" name="p_id-<?php echo $row['p_id']; ?>" value="<?php echo $row['p_id']; ?>">
                <input id="toggle-event-<?php echo $row['p_id']; ?>" type="checkbox" data-toggle="toggle">
           </td>
@@ -54,6 +55,7 @@ $(document).ready(function() {
           let oId = '<?php echo $o_id; ?>';
           let pId =  $('#p_id-<?php echo $row['p_id']; ?>').val();
           let isOn = $(this).prop('checked');
+          var date = $('#o_date-<?php echo $row['p_id']; ?>').val();
           var notes = $('#notes-<?php echo $row['p_id']; ?>').val(); 
           var size = $('#size-<?php echo $row['p_id']; ?>').val(); 
           var unit = parseFloat($('#unit-<?php echo $row['p_id']; ?>').val()) || 0; // Default to 0 if NaN   
@@ -62,7 +64,7 @@ $(document).ready(function() {
           $.ajax({
                url: './data/order_item_update.php',
                method: 'GET',
-               data: { status: isOn, pid: pId, oid: oId, ounit: unit, psize: size, cnotes: notes },
+               data: { status: isOn, pid: pId, date: date, oid: oId, ounit: unit, psize: size, cnotes: notes },
                     success: function(data) {
                          console.log('Server response:', data); // Log server response for debugging
                               // Handle success logic here

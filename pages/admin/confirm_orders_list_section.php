@@ -1,3 +1,4 @@
+<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 <?php
 // Include the Database class
 require './data/Database.php'; // Adjust the path as necessary
@@ -19,15 +20,15 @@ if (isset($_GET['o_id'])){
     $result = $db->partialCancelOrderIdListPage($like_o_id, $page, $itemsPerPage);
     $totalItems = $db->countForPartialCancelOrderIdListPage($like_o_id);
 } else{
-    $result = $db->cancelOrderListPage($page, $itemsPerPage);
-    $totalItems = $db->countForCancelOrderListPage();
+    $result = $db->confirmOrderListPage($page, $itemsPerPage);
+    $totalItems = $db->countForConfirmOrderListPage();
 }
 
 // Close the database connection
 $db->close();
         
 ?>
-
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 <!-- general form elements -->
 <!-- <div class="table-responsive mb-2">
     <tbody>
@@ -58,21 +59,21 @@ $db->close();
        <table class="table table-striped table-hover w-auto">
           <thead class="table-light">
             <tr>
-            <th><h5>Order ID</h5></th>
-            <th><h5>Date-Time</h5></th>
+            <th><h5>ID</h5></th>
+            <th><h5>Details</h5></th>
+            <th><h5>Date_Time</h5></th>
             <th><h5>Items</h5></th>
-            <th><h5>Name</h5></th>
-            <th><h5>Phone</h5></th>
             <th><h5>Address</h5></th>
             <th><h5>Notes</h5></th>
+            <th><h5>Delivery</h5></th>
             </tr>
           </thead>
-
+          
           <tbody>
                     <?php 
                         if (!empty($result['order'])) {
                             foreach ($result['order'] as $row) {
-                                include('./pages/admin/cancel_order_list_single_row.php');
+                                include('./pages/admin/confirm_order_list_single_row.php');
                             }
                         } else {
                             echo "0 results";
@@ -148,26 +149,3 @@ $db->close();
                 <!-- pagiantion ends -->
 
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
-<script>
-    $(document).ready(function() {
-        // Initialize the date picker
-        $('.datepicker').datepicker({
-            format: 'mm/dd/yyyy',
-            autoclose: true,
-            todayHighlight: true
-        }).on('changeDate', function() {
-            // Automatically submit the form when a date is selected
-            $('#searchForm').submit();
-        });
-
-        // Submit the form on pressing Enter in the Order ID input
-        $('#OrderId').on('keypress', function(e) {
-            if (e.which === 13) { // Enter key pressed
-                e.preventDefault(); // Prevent default form submission
-                $('#searchForm').submit(); // Submit the form
-            }
-        });
-    });
-</script>

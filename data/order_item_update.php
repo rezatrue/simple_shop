@@ -18,9 +18,10 @@ require 'Database.php';
             $o_unit = $_GET['ounit'];
             $p_size = $_GET['psize'];
             $c_notes = $_GET['cnotes'];
+            $o_date = $_GET['date'];
             echo '<pre/>';
             print_r($o_id);
-            $result = $db->addOderItem($o_id, $u_ip, $p_id, $o_unit, $p_size, $c_notes); 
+            $result = $db->addOderItem($o_id, $o_date, $u_ip, $p_id, $o_unit, $p_size, $c_notes); 
         }
         $db->close();
 

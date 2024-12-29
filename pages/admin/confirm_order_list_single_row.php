@@ -1,0 +1,78 @@
+
+<style>
+.scrollable-cell {
+     max-height: 100px; /* Set the desired height */
+     overflow-y: auto; /* Enable vertical scrolling */
+     overflow-x: hidden; /* Hide horizontal scrolling */
+     display: block; /* Make the td behave like a block */
+}
+</style>
+
+          <tr class="db-row" data-filter-row="001_SHOP" style="">
+             <td class="name">
+                  <?php echo htmlspecialchars($row['o_id']); ?>
+             </td>
+             
+             <td class="name">
+                  <a href="order_details.php?o_id=<?php echo htmlspecialchars($row['o_id']); ?>">open</a>
+             </td>
+
+             <td class="name">
+                  <?php echo htmlspecialchars($row['o_date']); ?>
+             </td>
+
+             <td class="name">
+                  <?php echo " Name: " . htmlspecialchars($row['p_name']) .
+                              "- Unit: " . htmlspecialchars($row['o_unit']) .
+                              "- Size: " . htmlspecialchars($row['p_size']) .
+                              "- Notes: " . htmlspecialchars($row['c_notes']) ;
+                  ?>
+             </td>
+
+             <td class="name">
+                  <?php 
+                  echo "Name: " . htmlspecialchars($row['o_name']) . "</br>
+                        Phone: " . htmlspecialchars($row['o_phone']) . "</br>
+                        Address: " . htmlspecialchars($row['o_address']) . "</br>"; 
+                  ?>
+             </td>
+
+             <td class="name">
+                  <?php echo htmlspecialchars($row['o_notes']); ?>
+             </td>
+
+             <td class="name">
+               <input type="hidden" id="o_id-<?php echo $row['o_id']; ?>" name="o_id-<?php echo $row['o_id']; ?>" value="<?php echo $row['o_id']; ?>">
+               <input id="delivery-<?php echo $row['o_id']; ?>" type="checkbox" data-toggle="toggle" data-on="Completed" data-off="Not Completed">                  
+             </td>
+           </tr>
+
+<script>
+$(document).ready(function() {
+    $('#delivery-<?php echo $row['o_id']; ?>').off('change');
+    $('#delivery-<?php echo $row['o_id']; ?>').bootstrapToggle('off');
+    $('#delivery-<?php echo $row['o_id']; ?>').change(function() {
+        let oId = $('#o_id-<?php echo $row['o_id']; ?>').val();
+        let isOn = $(this).prop('checked');
+        $.ajax({
+               url: './data/delivery_details_status_update.php',
+               method: 'GET',
+               data: { status: isOn, oid: oId},
+                    success: function(data) {
+                         console.log('Server response:', data); // Log server response for debugging
+                              // Handle success logic here
+                         },
+                    error: function(xhr, status, error) {
+                         console.error('AJAX Error:', status, error); // Log any AJAX errors
+                    }
+          });
+        if (isOn) {
+               console.log('Toggle is ON');
+          }else {
+               console.log('Toggle is OFF');
+          } 
+    });
+});     
+
+</script>
+

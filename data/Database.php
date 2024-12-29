@@ -728,7 +728,9 @@ public function addOderItem($o_id, $o_date, $u_ip, $p_id, $o_unit, $p_size, $c_n
                 JOIN 
                     products p ON o.p_id = p.p_id
                 LEFT JOIN 
-                    delivery_details dd ON o.o_id = dd.o_id    
+                    delivery_details dd ON o.o_id = dd.o_id
+                WHERE 
+                    dd.o_is_confirmed = 0        
                 GROUP BY 
                     o.o_id, o.o_date, dd.o_name, dd.o_phone, dd.o_address, dd.o_notes 
                 ORDER BY 
@@ -769,7 +771,7 @@ public function addOderItem($o_id, $o_date, $u_ip, $p_id, $o_unit, $p_size, $c_n
 
     public function queryCountForOrderListPage() {
         // SQL query to select data
-        $sql = "SELECT COUNT(DISTINCT o_id) AS total_count FROM order_table";
+        $sql = "SELECT COUNT(DISTINCT o_id) AS total_count FROM delivery_details WHERE o_is_confirmed = 0";
         $result = $this->query($sql);
         $row = mysqli_fetch_assoc($result);
         $totalCount = (int)$row['total_count'];
@@ -795,7 +797,9 @@ public function addOderItem($o_id, $o_date, $u_ip, $p_id, $o_unit, $p_size, $c_n
                     products p ON o.p_id = p.p_id
                 LEFT JOIN 
                     delivery_details dd ON o.o_id = dd.o_id    
-                WHERE 
+                WHERE
+                    dd.o_is_confirmed = 0
+                AND 
                     o.o_id LIKE '%" . $like_o_id . "%'     
                 GROUP BY 
                     o.o_id, o.o_date, dd.o_name, dd.o_phone, dd.o_address, dd.o_notes
@@ -837,7 +841,7 @@ public function addOderItem($o_id, $o_date, $u_ip, $p_id, $o_unit, $p_size, $c_n
 
     public function queryCountForPartialOrderIdListPage($like_o_id) {
         // SQL query to select data
-        $sql = "SELECT COUNT(DISTINCT o_id) AS total_count FROM order_table WHERE o_id LIKE '%" . $like_o_id . "%'";
+        $sql = "SELECT COUNT(DISTINCT o_id) AS total_count FROM delivery_details WHERE o_is_confirmed = 0 AND o_id LIKE '%" . $like_o_id . "%'";
         $result = $this->query($sql);
         $row = mysqli_fetch_assoc($result);
         $totalCount = (int)$row['total_count'];
@@ -851,6 +855,7 @@ public function addOderItem($o_id, $o_date, $u_ip, $p_id, $o_unit, $p_size, $c_n
                 o.p_id,
                 o.o_unit,
                 o.p_size,
+                o.o_date,
                 o.c_notes,
                 p.p_name,
                 p.p_price,
@@ -877,6 +882,7 @@ public function addOderItem($o_id, $o_date, $u_ip, $p_id, $o_unit, $p_size, $c_n
                         'p_size' => $row['p_size'],
                         'c_notes' => $row['c_notes'],
                         'p_name' => $row['p_name'],
+                        'o_date' => $row['o_date'],
                         'p_price' => $row['p_price'],
                         'total_amount' => $row['total_amount']
                     ];
@@ -884,9 +890,9 @@ public function addOderItem($o_id, $o_date, $u_ip, $p_id, $o_unit, $p_size, $c_n
             }
         }
         // echo '<pre>';
-        // print_r($relatedOrderList);
+        // print_r($orderDetails);
         // echo '<pre/>';
-        //exit();
+        // exit();
         return $orderDetails; 
     }
 
@@ -895,6 +901,18 @@ public function addOderItem($o_id, $o_date, $u_ip, $p_id, $o_unit, $p_size, $c_n
         $sql = "INSERT INTO delivery_details (o_id, o_name, o_phone, o_address, o_notes) VALUES (?,?,?,?,?)";
         $stmt = $this->prepare($sql);
         $stmt->bind_param("sssss", $o_id, $name, $phone, $address, $notes); // d for daouble & i for number
+        if ($stmt->execute()) {
+            return true; // Or any other success indication
+        } else {
+            return false;
+        }
+    }
+
+    public function updateDeliveryDetails($o_id, $name, $phone, $address, $notes) {
+
+        $sql = "UPDATE delivery_details SET o_name = ? , o_phone = ?, o_address = ?, o_notes = ? WHERE o_id = ?";
+        $stmt = $this->prepare($sql);
+        $stmt->bind_param("sssss", $name, $phone, $address, $notes, $o_id); // d for daouble & i for number
         if ($stmt->execute()) {
             return true; // Or any other success indication
         } else {
@@ -1013,7 +1031,7 @@ public function addOderItem($o_id, $o_date, $u_ip, $p_id, $o_unit, $p_size, $c_n
     }
 
 
-    public function countForCancalOrderListPage() { //queryCountForOrderListPage
+    public function countForCancelOrderListPage() { //queryCountForOrderListPage
         // SQL query to select data
         $sql = "SELECT COUNT(DISTINCT o_id) AS total_count FROM cancel_order";
         $result = $this->query($sql);
@@ -1083,6 +1101,96 @@ public function addOderItem($o_id, $o_date, $u_ip, $p_id, $o_unit, $p_size, $c_n
         // $totalItems = mysqli_num_rows($result);
     }
 
+    public function confirmOrderListPage($page, $itemsPerPage) { // cancelOrderListPage
+        $offset = ($page - 1) * $itemsPerPage ;
+        $sql = "SELECT 
+                    dd.o_id,
+                    dd.o_name,
+                    dd.o_phone,
+                    dd.o_address,
+                    dd.o_notes,
+                    dd.o_is_delivered,
+                    ot.o_date,
+                    p.p_name,
+                    ot.o_unit,
+                    ot.p_size,
+                    ot.c_notes
+                FROM 
+                    delivery_details dd
+                JOIN 
+                    order_table ot ON dd.o_id = ot.o_id
+                JOIN 
+                    products p ON ot.p_id = p.p_id        
+                WHERE 
+                    dd.o_is_confirmed = 1
+                GROUP BY
+                    ot.o_id           
+                ORDER BY 
+                    ot.o_date DESC
+                LIMIT " 
+                    .$itemsPerPage .
+                " OFFSET "
+                    . $offset; 
+                    
+        $result = $this->query($sql);
+
+        $confirmOrderList['order'] = [];
+        if ($result) {
+            // Assuming $result is an associative array of rows
+            foreach ($result as $row) {
+                // Check if the product already exists in the array
+                if (isset($row['o_id'])) {
+                    // Store product name and price
+                    $item['item'][] = [
+                        'p_name' => $row['p_name'],
+                        'o_unit' => $row['o_unit'],
+                        'p_size' => $row['p_size'],
+                        'c_notes' => $row['c_notes']];
+                    $confirmOrderList['order'][] = [
+                        'o_id' => $row['o_id'],
+                        'o_date' => $row['o_date'],
+                        'o_name' => $row['o_name'],
+                        'o_phone' => $row['o_phone'],
+                        'o_address' => $row['o_address'],
+                        'o_notes' => $row['o_notes'],
+                        'c_items' => $item,
+                        'o_is_delivered' => $row['o_is_delivered']
+                    ];
+                }  
+            }
+        }
+        // echo '<pre>';
+        // print_r($confirmOrderList);
+        // echo '<pre/>';
+        // exit();
+        return $confirmOrderList; 
+        
+    }
+
+
+    public function countForConfirmOrderListPage() { //countForCancelOrderListPage
+        // SQL query to select data
+        $sql = "SELECT COUNT(DISTINCT o_id) AS total_count FROM delivery_details WHERE o_is_confirmed = 1";
+        $result = $this->query($sql);
+        $row = mysqli_fetch_assoc($result);
+        $totalCount = (int)$row['total_count'];
+        return $totalCount;
+        // $totalItems = mysqli_num_rows($result);
+    }
+
+    public function confirmOrders($o_id) { 
+        // SQL query to select data
+        $sql = "UPDATE delivery_details SET o_is_confirmed = 1 WHERE o_id = '".$o_id."'" ;
+        $result = $this->query($sql);
+        return $result ? 1 : 0;
+    }
+
+    public function confirmDelivery($o_id, $status) { 
+        // SQL query to select data
+        $sql = "UPDATE delivery_details SET o_is_delivered = ".$status." WHERE o_id = '".$o_id."'" ;
+        $result = $this->query($sql);
+        return $result ? 1 : 0;
+    }
 
 }
 

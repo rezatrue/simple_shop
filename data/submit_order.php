@@ -27,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         unset($_SESSION['cart'][$id]);
                     }
                 }
+                $db->deliveryDetails($generatedUniqueId, '', '', '', '');
                 $db->close();
             }else {
                 echo "0 results";

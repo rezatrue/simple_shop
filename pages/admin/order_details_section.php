@@ -138,7 +138,7 @@ if(isset($_GET['o_id'])){
                 <td>Price/Unit</td> 
                 <td>Sizes</td> 
                 <td>Customer Notes</td> 
-                <td>NO/OFF</td> 
+                <td>ON/OFF</td> 
             </tr>
           </thead>
 

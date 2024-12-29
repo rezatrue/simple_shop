@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
  
     if (isset($_POST['o_id']) && $_POST['o_id'] != null && isset($_POST['phone']) && $_POST['phone'] != null ){
         $db = new Database();
-        $result = $db->deliveryDetails($o_id, $name, $phone, $address, $notes);
+        $result = $db->updateDeliveryDetails($o_id, $name, $phone, $address, $notes);
         $db->close();
         if($result)
             $show_msg = 1;
