@@ -5,9 +5,13 @@ require './data/Database.php'; // Adjust the path as necessary
 
 $show_msg = 0;
 $order_id = null;
-if(isset($_GET['order_id']))
+if(isset($_GET['order_id'])){
     $order_id = $_GET['order_id'];
-
+    $db = new Database();
+    $deliverydetails = $db->getDeliveryDetails($order_id);
+    $db->close();
+}
+    
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name = '';
     if (isset($_POST['name']))
@@ -109,19 +113,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <input type="hidden" class="form-control" id="o_id" name="o_id" value="<?php if($order_id) echo $order_id; ?>" required>
                                 <div class="form-group">
                                     <label for="Username">Name</label>
-                                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter Your Name">
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter Your Name" value="<?php if(isset($deliverydetails[0]['o_name']) && $deliverydetails[0]['o_name'] != null) echo $deliverydetails[0]['o_name'];?>">
                                 </div>
                                 <div class="form-group">
                                     <label for="Password">Phone*</label>
-                                    <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter Contact Phone" required>
+                                    <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter Contact Phone" value="<?php if(isset($deliverydetails[0]['o_phone']) && $deliverydetails[0]['o_phone'] != null) echo $deliverydetails[0]['o_phone'];?>" required >
                                 </div>
                                 <div class="form-group">
                                     <label for="Password">Address</label>
-                                    <input type="text" class="form-control" id="address" name="address" placeholder="Enter Dalivery Address">
+                                    <input type="text" class="form-control" id="address" name="address" placeholder="Enter Dalivery Address" value="<?php if(isset($deliverydetails[0]['o_address']) && $deliverydetails[0]['o_address'] != null) echo $deliverydetails[0]['o_address'];?>">
                                 </div>
                                 <div class="form-group">
                                     <label for="Password">Notes</label>
-                                    <input type="text" class="form-control" id="notes" name="notes" placeholder="Enter notes">
+                                    <input type="text" class="form-control" id="notes" name="notes" placeholder="Enter notes" value="<?php if(isset($deliverydetails[0]['o_notes']) && $deliverydetails[0]['o_notes'] != null) echo $deliverydetails[0]['o_notes'];?>">
                                 </div>
                                 <div class="form-group">
                                     <input type="submit" value="Submit">

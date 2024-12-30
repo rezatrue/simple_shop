@@ -920,6 +920,21 @@ public function addOderItem($o_id, $o_date, $u_ip, $p_id, $o_unit, $p_size, $c_n
         }
     }
 
+    public function getDeliveryDetails($o_id) {
+
+        $sql = "SELECT * FROM delivery_details WHERE o_id = ?";
+        $stmt = $this->prepare($sql);
+        $stmt->bind_param("s", $o_id); // d for daouble & i for number
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $data = [];
+        while ($row = $result->fetch_assoc()) {
+            $data[] = $row; // Store each row in an array
+        }
+        return $data;
+        
+    }
+
     public function cancelOrder($o_id, $notes) {
         $sql = "SELECT * FROM delivery_details WHERE o_id = ?";
         $stmt = $this->prepare($sql);
@@ -1110,17 +1125,11 @@ public function addOderItem($o_id, $o_date, $u_ip, $p_id, $o_unit, $p_size, $c_n
                     dd.o_address,
                     dd.o_notes,
                     dd.o_is_delivered,
-                    ot.o_date,
-                    p.p_name,
-                    ot.o_unit,
-                    ot.p_size,
-                    ot.c_notes
+                    ot.o_date
                 FROM 
                     delivery_details dd
                 JOIN 
                     order_table ot ON dd.o_id = ot.o_id
-                JOIN 
-                    products p ON ot.p_id = p.p_id        
                 WHERE 
                     dd.o_is_confirmed = 1
                 GROUP BY
@@ -1141,11 +1150,7 @@ public function addOderItem($o_id, $o_date, $u_ip, $p_id, $o_unit, $p_size, $c_n
                 // Check if the product already exists in the array
                 if (isset($row['o_id'])) {
                     // Store product name and price
-                    $item['item'][] = [
-                        'p_name' => $row['p_name'],
-                        'o_unit' => $row['o_unit'],
-                        'p_size' => $row['p_size'],
-                        'c_notes' => $row['c_notes']];
+                    $item = $this->orderDetails($row['o_id']);
                     $confirmOrderList['order'][] = [
                         'o_id' => $row['o_id'],
                         'o_date' => $row['o_date'],
@@ -1190,6 +1195,74 @@ public function addOderItem($o_id, $o_date, $u_ip, $p_id, $o_unit, $p_size, $c_n
         $sql = "UPDATE delivery_details SET o_is_delivered = ".$status." WHERE o_id = '".$o_id."'" ;
         $result = $this->query($sql);
         return $result ? 1 : 0;
+    }
+
+    public function partialConfirmOrderIdListPage($like_o_id, $page, $itemsPerPage) { // partialCancelOrderIdListPage
+        // SQL query to select data
+        $offset = ($page - 1) * $itemsPerPage ;
+        $sql = "SELECT 
+                    dd.o_id,
+                    dd.o_name,
+                    dd.o_phone,
+                    dd.o_address,
+                    dd.o_notes,
+                    dd.o_is_delivered,
+                    ot.o_date
+                FROM 
+                    delivery_details dd
+                JOIN 
+                    order_table ot ON dd.o_id = ot.o_id
+                WHERE 
+                    dd.o_is_confirmed = 1
+                AND
+                    dd.o_id LIKE '%" . $like_o_id . "%'" .     
+                " GROUP BY
+                    ot.o_id           
+                ORDER BY 
+                    ot.o_date DESC
+                LIMIT " 
+                    .$itemsPerPage .
+                " OFFSET "
+                    . $offset; 
+         
+        $result = $this->query($sql);
+
+        $confirmOrderList['order'] = [];
+        if ($result) {
+            // Assuming $result is an associative array of rows
+            foreach ($result as $row) {
+                // Check if the product already exists in the array
+                if (isset($row['o_id'])) {
+                    // Store product name and price
+                    $item = $this->orderDetails($row['o_id']);
+                    $confirmOrderList['order'][] = [
+                        'o_id' => $row['o_id'],
+                        'o_date' => $row['o_date'],
+                        'o_name' => $row['o_name'],
+                        'o_phone' => $row['o_phone'],
+                        'o_address' => $row['o_address'],
+                        'o_notes' => $row['o_notes'],
+                        'c_items' => $item,
+                        'o_is_delivered' => $row['o_is_delivered']
+                    ];
+                }  
+            }
+        }
+        // echo '<pre>';
+        // print_r($confirmOrderList);
+        // echo '<pre/>';
+        // exit();
+        return $confirmOrderList; 
+    }    
+
+    public function countForPartialConfirmOrderIdListPage($like_o_id) { //countForPartialCancelOrderIdListPage
+        // SQL query to select data
+        $sql = "SELECT COUNT(DISTINCT o_id) AS total_count FROM delivery_details WHERE o_is_confirmed = 1 AND o_id LIKE '%" . $like_o_id . "%'";
+        $result = $this->query($sql);
+        $row = mysqli_fetch_assoc($result);
+        $totalCount = (int)$row['total_count'];
+        return $totalCount;
+        // $totalItems = mysqli_num_rows($result);
     }
 
 }

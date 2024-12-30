@@ -17,8 +17,8 @@ $itemsPerPage = 10; // Items per page
 $db = new Database();
 
 if (isset($_GET['o_id'])){
-    $result = $db->partialCancelOrderIdListPage($like_o_id, $page, $itemsPerPage);
-    $totalItems = $db->countForPartialCancelOrderIdListPage($like_o_id);
+    $result = $db->partialConfirmOrderIdListPage($like_o_id, $page, $itemsPerPage);
+    $totalItems = $db->countForPartialConfirmOrderIdListPage($like_o_id);
 } else{
     $result = $db->confirmOrderListPage($page, $itemsPerPage);
     $totalItems = $db->countForConfirmOrderListPage();
@@ -33,14 +33,14 @@ $db->close();
 <!-- <div class="table-responsive mb-2">
     <tbody>
         <tr> -->
-            <form action="cancel_orders.php" method="get" id="searchForm">
+            <form action="confirm_orders.php" method="get" id="searchForm">
             <div class="row">
                 <div class="col-12 col-sm-4">
                     Order ID : <input id="o_id" name="o_id"></input>
                 </div>
-                <div class="col-12 col-sm-4">
+                <!-- <div class="col-12 col-sm-4">
                     Date : <input type="text" id="Date" name="Date" class="form-control datepicker" placeholder="Select Date" autocomplete="off">
-                </div> 
+                </div>  -->
                 <div class="col-12 col-sm-4"> 
                     <button type="submit" class="btn btn-primary btn-sm">Search</button>
                 </div>    

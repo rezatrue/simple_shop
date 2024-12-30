@@ -22,11 +22,23 @@
              </td>
 
              <td class="name">
-                  <?php echo " Name: " . htmlspecialchars($row['p_name']) .
-                              "- Unit: " . htmlspecialchars($row['o_unit']) .
-                              "- Size: " . htmlspecialchars($row['p_size']) .
-                              "- Notes: " . htmlspecialchars($row['c_notes']) ;
+
+                  <?php 
+                  $itemCount = 1;
+                  $totalCost = 0;
+                  foreach($row['c_items']['item'] as $singleItem){
+                    echo "<strong>(". $itemCount . ")".
+                    " Name: </strong>" . htmlspecialchars($singleItem['p_name']) .
+                    "- Unit: " . htmlspecialchars($singleItem['o_unit']) .
+                    "- Size: " . htmlspecialchars($singleItem['p_size']) .
+                    "- Notes: " . htmlspecialchars($singleItem['c_notes']) .
+                    "- <i>price: " . htmlspecialchars($singleItem['total_amount']) ."<i><br>";
+                    $itemCount++;
+                    $totalCost = $totalCost + $singleItem['total_amount'];
+                  }
+                  echo "<strong>Total : " . $totalCost . "</strong>"; 
                   ?>
+                  
              </td>
 
              <td class="name">
@@ -42,15 +54,19 @@
              </td>
 
              <td class="name">
+             
                <input type="hidden" id="o_id-<?php echo $row['o_id']; ?>" name="o_id-<?php echo $row['o_id']; ?>" value="<?php echo $row['o_id']; ?>">
-               <input id="delivery-<?php echo $row['o_id']; ?>" type="checkbox" data-toggle="toggle" data-on="Completed" data-off="Not Completed">                  
+               <input id="delivery-<?php echo $row['o_id']; ?>" type="checkbox" data-toggle="toggle" data-on="Completed" data-off="Not Completed" >                  
              </td>
            </tr>
 
 <script>
 $(document).ready(function() {
     $('#delivery-<?php echo $row['o_id']; ?>').off('change');
-    $('#delivery-<?php echo $row['o_id']; ?>').bootstrapToggle('off');
+    if(<?php echo $row['o_is_delivered']; ?> == 1)
+          $('#delivery-<?php echo $row['o_id']; ?>').bootstrapToggle('on');
+     if(<?php echo $row['o_is_delivered']; ?> == 0)
+          $('#delivery-<?php echo $row['o_id']; ?>').bootstrapToggle('off');     
     $('#delivery-<?php echo $row['o_id']; ?>').change(function() {
         let oId = $('#o_id-<?php echo $row['o_id']; ?>').val();
         let isOn = $(this).prop('checked');

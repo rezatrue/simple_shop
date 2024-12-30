@@ -43,6 +43,11 @@ if(isset($_GET['o_id'])){
             $grand_total = $grand_total + $row['p_price'] * $row['o_unit'];
         }
     } 
+
+    $deliverydetails = $db->getDeliveryDetails($o_id);
+
+    $db->close(); 
+
 }    
     
 
@@ -62,7 +67,9 @@ if(isset($_GET['o_id'])){
 <!-- general form elements -->
 <div class="card card-primary">
   <!-- <div class="card-header"> -->
-    
+  <?php if(isset($deliverydetails) && $deliverydetails != null)
+    echo '<div class="text-center">Name: ' .$deliverydetails[0]['o_name']. ' Phone: ' .$deliverydetails[0]['o_phone']. ' Address: ' .$deliverydetails[0]['o_address']. ' Notes: ' .$deliverydetails[0]['o_notes']. ' <a target="_blank" href="thank_you.php?order_id='.$deliverydetails[0]['o_id'].'">Set Delivery info</a> </div>';
+   ?>
     <div class="card-header d-flex justify-content-between align-items-center text-white"> 
        
         <div class="name">
@@ -80,7 +87,7 @@ if(isset($_GET['o_id'])){
         </div>
         <div class="name">
             <input type="hidden" name="submit_other" value="other">
-            <button class="btn btn-success btn-sm" type="submit" name="submit_confirm" value="confirm">Confirm Order</button>
+            <button class="btn btn-success btn-sm" type="submit" name="submit_confirm" value="confirm" <?php if(isset($deliverydetails[0]['o_is_confirmed']) && $deliverydetails[0]['o_is_confirmed'] == 1) echo 'disabled';?>>Confirm Order</button>
         </div>
         <div class="name">
             <input type="hidden" name="reason" id="reasonInput">
@@ -93,6 +100,7 @@ if(isset($_GET['o_id'])){
           
   <!-- </div> -->
   <!-- /.card-header -->
+
 <!-- table start -->
     <div class="table-responsive">
        <table class="table table-striped table-hover w-auto">
