@@ -19,6 +19,7 @@ if(sizeof($product) == 0){
 }
 
 ?>
+
     <!-- Modal -->
     <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
@@ -95,15 +96,16 @@ if(sizeof($product) == 0){
                             <p><?php echo $product['p_specification']; ?></p>
 
                             <form action="./data/manage_cart.php" method="POST">
-                                <input type="hidden" name="product-id" value="<?php echo $product['p_id']; ?>">
-                                <input type="hidden" name="product-title" value="<?php echo htmlspecialchars($product['p_name']); ?>">
-                                <input type="hidden" name="product-unit-price" value="<?php echo $product['p_price']; ?>">
-                                <input type="hidden" name="product-image" value="<?php echo $product['p_images'][0]; ?>">
+                                <input type="hidden" name="p_id" value="<?php echo $product['p_id']; ?>">
+                                <input type="hidden" name="p_title" value="<?php echo htmlspecialchars($product['p_name']); ?>">
+                                <input type="hidden" name="p_unit_price" value="<?php echo $product['p_price']; ?>">
+                                <input type="hidden" name="p_image" value="<?php echo $product['p_images'][0]; ?>">
                                 <div class="row">
+                                    
                                     <div class="col-auto">
                                         <ul class="list-inline pb-3">
                                             <li class="list-inline-item">Size :
-                                                <input type="hidden" name="product-size" id="product-size" value="S">
+                                                <input type="hidden" name="p_size" id="product-size" value="S">
                                             </li>
                                             <?php 
                                                 $sizes = explode(";",trim($product['p_sizes']));
@@ -117,7 +119,7 @@ if(sizeof($product) == 0){
                                         <ul class="list-inline pb-3">
                                             <li class="list-inline-item text-right">
                                                 Quantity
-                                                <input type="hidden" name="product-quanity" id="product-quanity" value="1">
+                                                <input type="hidden" name="p_quanity" id="product-quanity" value="1">
                                             </li>
                                             <li class="list-inline-item"><span class="btn btn-success" id="btn-minus">-</span></li>
                                             <li class="list-inline-item"><span class="badge bg-secondary" id="var-value">1</span></li>
@@ -128,9 +130,11 @@ if(sizeof($product) == 0){
                                 <div class="row pb-3">
                                     <div class="col d-grid">
                                         <button type="submit" class="btn btn-success btn-lg" name="submit" value="buy">Buy</button>
+                                        </form>
                                     </div>
+                            
                                     <div class="col d-grid">
-                                        <button type="submit" class="btn btn-success btn-lg" name="submit" value="addtocard">Add To Cart</button>
+                                        <button class="btn btn-success btn-lg"  name="submit" value="addtocard">Add To Cart</button>
                                     </div>
                                 </div>
                             </form>
@@ -185,15 +189,47 @@ if(sizeof($product) == 0){
                     echo "0 results";
                 }
                 
-                
                 ?>
 
             </div>
 
-
         </div>
     </section>
     <!-- End Article -->
+<script src="assets/js/jquery-1.11.0.min.js"></script>
+<script>
 
-
+<?php     
+if (!empty($relatedProductDetails)) {
+    foreach ($relatedProductDetails as $row) {
+        $image = '';
+        if(!empty($row['p_images'])){ foreach($row['p_images'] as $img){if($img){ $image = json_encode($img) ; break;}} } else { $image = '""'; }
+        echo "
+         $(document).ready(function() {
+                // Load categories on input
+                $('#submit-". $row['p_id']."').on('click', function() {
+                    let action = $(this).val();
+                    //alert(action);
+                    let p_id = ". $row['p_id'].";
+                    let p_name = '". $row['p_name']."';
+                    let p_price = ". $row['p_price'].";
+                    let p_quanity = 1;
+                    let p_sizes = '". htmlspecialchars($row['p_sizes'])."';
+                    let p_image = ".$image.";
+                    $.ajax({
+                        url: './data/manage_cart.php',
+                        method: 'POST',
+                        data: { action: action, p_id: p_id, p_title: p_name, p_unit_price: p_price, p_quanity: p_quanity, p_size: p_sizes, p_image: p_image},
+                        success: function(data) {
+                            console.log('success');
+                            }
+                    });
+                    
+                });
+            });
+        ";
+    }
+} 
+?>   
+</script> 
 

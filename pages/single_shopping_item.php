@@ -20,7 +20,7 @@
                 <div class="card-header d-flex justify-content-between align-items-center bg-success text-white">
                     <h5 class="mb-0"><?php echo htmlspecialchars($item['name']); ?></h5>
                     
-                        <input type="hidden" name="product-id" value="<?php echo $id; ?>">
+                        <input type="hidden" name="p_id" value="<?php echo $id; ?>">
                         <button class="btn btn-danger btn-sm" type="submit" name="submit" value="remove">Delete</button>
                 </div>
                 <div class="row g-0">

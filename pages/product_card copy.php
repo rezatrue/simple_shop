@@ -16,7 +16,19 @@
                 <ul class="list-unstyled">
                     <!-- <li><a class="btn btn-success text-white" href="product_details.php?id=<?php echo htmlspecialchars($row['p_id']); ?>"><i class="far fa-heart"></i></a></li> -->
                     <li><a class="btn btn-success text-white mt-2" href="product_details.php?id=<?php echo htmlspecialchars($row['p_id']); ?>"><i class="far fa-eye"></i></a></li>
-                    <button type="submit" id="submit-<?php echo $row['p_id']; ?>" name="submit" value="addtocard" class="btn btn-success text-white mt-2"><i class="fas fa-cart-plus"></i></button>  
+                    <!-- form action="./data/manage_cart.php" method="POST" -->
+                        <input type="hidden" name="product-id" value="<?php echo $row['p_id']; ?>">
+                        <input type="hidden" name="product-title" value="<?php echo $row['p_name']; ?>">
+                        <input type="hidden" name="product-unit-price" value="<?php echo $row['p_price']; ?>">
+                        <input type="hidden" name="product-quanity" value="1">
+                        <input type="hidden" name="product-size" value="<?php echo htmlspecialchars($row['p_sizes']); ?>">
+                        <input type="hidden" name="product-image" value="<?php if($row['p_images']){ foreach($row['p_images'] as $img){
+                                                                                                    if($img){ echo $img;
+                                                                                                        break;} }
+                                                                                } ?>">
+                        <button type="submit" id="submit-<?php echo $row['p_id']; ?>" name="submit" value="addtocard" class="btn btn-success text-white mt-2"><i class="fas fa-cart-plus"></i></button>
+                    <!--/form-->
+                        
                 </ul>
             </div>
         </div>
@@ -47,25 +59,48 @@
 </div>
 <script>
  $(document).ready(function() {
-    // Load categories on input
-    $('#submit-<?php echo $row['p_id']; ?>').on('click', function() {
-        let action = $(this).val();
-        //alert(action);
-        let p_id = <?php echo $row['p_id']; ?>;
-        let p_name = '<?php echo $row['p_name']; ?>';
-        let p_price = <?php echo $row['p_price']; ?>;
-        let p_quanity = 1;
-        let p_sizes = '<?php echo htmlspecialchars($row['p_sizes']); ?>';
-        let p_image = <?php if(!empty($row['p_images'])){ foreach($row['p_images'] as $img){if($img){ echo json_encode($img) ; break;}} } else { echo '""'; }?>;
-        $.ajax({
-            url: './data/manage_cart.php',
-            method: 'POST',
-            data: { action: action, p_id: p_id, p_title: p_name, p_unit_price: p_price, p_quanity: p_quanity, p_size: p_sizes, p_image: p_image},
-            success: function(data) {
-                console.log('success');
-                }
+        // Load categories on input
+        $('#submit-<?php echo $row['p_id']; ?>').on('click', function() {
+            let query = $(this).val();
+            alert(query);
+            // if (query.length > 2) {
+            //     $.ajax({
+            //         url: './data/fetch_products.php',
+            //         method: 'GET',
+            //         data: { query: query },
+            //         success: function(data) {
+            //             $('#productList').html(data).show();
+            //         }
+            //     });
+            // } else {
+            //     $('#productList').hide();
+            // }
         });
-        
-    });
-});   
+
+        // Select a product
+        $(document).on('click', '.product-item', function() {
+            let pname = $(this).text();
+            let price = $(this).data('price');
+            let sizes = $(this).data('sizes');
+            let pid = $(this).data('pid');
+            $('#productList').hide();
+            $('#search-unit').val('0');
+            $('#search-pid').val(pid);
+            $('#search-name').val(pname);
+            $('#search-unit-price').text(price);
+            $('#search-size').val(sizes);
+            // Iterate through all elements with IDs starting with 'id-'
+            $('[id^="id-"]').each(function() {
+                var itemId = parseInt($(this).val()) || 0; 
+                if(itemId == pid){
+                    $('#search-pid').val('0');
+                    $('#search-name').val('');
+                    $('#search-unit-price').text('0');
+                    $('#search-size').val('');
+                    alert(pname +' is already in the list.')
+                }
+            });
+
+        });
+    });   
 </script>

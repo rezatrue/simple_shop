@@ -1,3 +1,4 @@
+
 <style>
     .page-item.active .page-link{
     background-color: #69bb7e;
@@ -19,7 +20,7 @@ $totalItems = 0; // Total number of items
 $itemsPerPage = 6; // Items per page    
 
 ?>
-
+<script src="assets/js/jquery-1.11.0.min.js"></script>
 <!-- Modal -->
     <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
