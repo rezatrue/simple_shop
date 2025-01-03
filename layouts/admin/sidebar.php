@@ -51,7 +51,7 @@
           </li>
           <li class="nav-item">
             <a href="order_list.php" class="nav-link">
-              <i class="nav-icon fas fa-columns"></i>
+              <i class="nav-icon fas fa-list"></i>
               <p>Order List</p>
             </a>
           </li> 
@@ -96,6 +96,12 @@
                 </a>
               </li>
             </ul>
+          </li>
+          <li class="nav-item">
+            <a href="closed_orders.php" class="nav-link">
+              <i class="nav-icon fas fa-columns"></i>
+              <p>Order Closed</p>
+            </a>
           </li>
           <li class="nav-item">
             <a href="cancel_orders.php" class="nav-link">

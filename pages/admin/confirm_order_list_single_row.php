@@ -13,8 +13,15 @@
                   <?php echo htmlspecialchars($row['o_id']); ?>
              </td>
              
-             <td class="name">
-                  <a href="order_details.php?o_id=<?php echo htmlspecialchars($row['o_id']); ?>">open</a>
+             <td class="name" id="detail_link-<?php echo $row['o_id']; ?>">
+                   <?php 
+                         if($row['o_is_delivered']  == 0){
+                              echo '<a href="order_details.php?o_id= 10"' . htmlspecialchars($row['o_id']) . '">open</a>'; 
+                         }else{
+                              echo '<p>closed</p>';
+                         }
+                    ?>
+                   <div ><?php  ?></div>
              </td>
 
              <td class="name">
@@ -63,20 +70,27 @@
 <script>
 $(document).ready(function() {
     $('#delivery-<?php echo $row['o_id']; ?>').off('change');
-    if(<?php echo $row['o_is_delivered']; ?> == 1)
+
+    if(<?php echo $row['o_is_delivered']; ?> == 1){
           $('#delivery-<?php echo $row['o_id']; ?>').bootstrapToggle('on');
+          $('#delivery-<?php echo $row['o_id']; ?>').bootstrapToggle('disable');
+     }     
      if(<?php echo $row['o_is_delivered']; ?> == 0)
-          $('#delivery-<?php echo $row['o_id']; ?>').bootstrapToggle('off');     
+          $('#delivery-<?php echo $row['o_id']; ?>').bootstrapToggle('off'); 
+
     $('#delivery-<?php echo $row['o_id']; ?>').change(function() {
         let oId = $('#o_id-<?php echo $row['o_id']; ?>').val();
         let isOn = $(this).prop('checked');
+        let row = <?php echo json_encode($row); ?>;
         $.ajax({
                url: './data/delivery_details_status_update.php',
                method: 'GET',
-               data: { status: isOn, oid: oId},
+               data: { status: isOn, oid: oId, row: row},
                     success: function(data) {
                          console.log('Server response:', data); // Log server response for debugging
                               // Handle success logic here
+                              $('#delivery-<?php echo $row['o_id']; ?>').bootstrapToggle('disable');
+                              $('#detail_link-<?php echo $row['o_id']; ?>').text('Closed');    
                          },
                     error: function(xhr, status, error) {
                          console.error('AJAX Error:', status, error); // Log any AJAX errors

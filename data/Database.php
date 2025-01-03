@@ -989,13 +989,18 @@ public function addOderItem($o_id, $o_date, $u_ip, $p_id, $o_unit, $p_size, $c_n
         //$result = $stmt2->get_result();
 
         if($stmt2->execute()){
+            $this->removeOrder($o_id);
+        }
+        
+    }
+
+    public function removeOrder($o_id){
             $sql3 = "DELETE FROM delivery_details WHERE o_id = '" . $o_id . "'";
             $this->query($sql3);
             $sql4 = "DELETE FROM order_table WHERE o_id = '" . $o_id . "'";
             $this->query($sql4);
-        }
-        
     }
+    
 
     public function cancelOrderListPage($page, $itemsPerPage) { // queryForOrderListPage
         $offset = ($page - 1) * $itemsPerPage ;
@@ -1258,6 +1263,128 @@ public function addOderItem($o_id, $o_date, $u_ip, $p_id, $o_unit, $p_size, $c_n
     public function countForPartialConfirmOrderIdListPage($like_o_id) { //countForPartialCancelOrderIdListPage
         // SQL query to select data
         $sql = "SELECT COUNT(DISTINCT o_id) AS total_count FROM delivery_details WHERE o_is_confirmed = 1 AND o_id LIKE '%" . $like_o_id . "%'";
+        $result = $this->query($sql);
+        $row = mysqli_fetch_assoc($result);
+        $totalCount = (int)$row['total_count'];
+        return $totalCount;
+        // $totalItems = mysqli_num_rows($result);
+    }
+
+    public function addToClosedOrders($row) { 
+        
+        // Convert the array to a JSON string
+        $itemsString = json_encode($row['c_items']['item']);
+        $sql = "INSERT INTO closed_orders(o_id, o_name, o_phone, o_address, o_notes, o_date, d_date, o_items) 
+        VALUES (? , ? , ? , ? , ? , ? , now() , ?)";
+        $stmt = $this->prepare($sql);
+        $stmt->bind_param("sssssss", $row['o_id'], $row['o_name'], $row['o_phone'], $row['o_address'], $row['o_notes'], $row['o_date'], $itemsString); 
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result; 
+
+    }
+
+    public function closedOrderListPage($page, $itemsPerPage) { // confirmOrderListPage
+        $offset = ($page - 1) * $itemsPerPage ;
+        $sql = "SELECT 
+                     *
+                FROM 
+                    closed_orders         
+                ORDER BY 
+                    d_date DESC
+                LIMIT " 
+                    .$itemsPerPage .
+                " OFFSET "
+                    . $offset; 
+                    
+        $result = $this->query($sql);
+
+        $closedOrderList['order'] = [];
+        if ($result) {
+            // Assuming $result is an associative array of rows
+            foreach ($result as $row) {
+                // Check if the product already exists in the array
+                if (isset($row['o_id'])) {
+                    // Store product name and price
+                    $closedOrderList['order'][] = [
+                        'o_id' => $row['o_id'],
+                        'o_name' => $row['o_name'],
+                        'o_phone' => $row['o_phone'],
+                        'o_address' => $row['o_address'],
+                        'o_notes' => $row['o_notes'],
+                        'o_date' => $row['o_date'],
+                        'd_date' => $row['d_date'],
+                        'o_items' => json_decode($row['o_items'], true)
+                    ];
+                }  
+            }
+        }
+        // echo '<pre>';
+        // print_r($closedOrderList);
+        // echo '<pre/>';
+        // exit();
+        return $closedOrderList; 
+        
+    }
+
+    public function countForClosedOrderListPage() { //countForConfirmOrderListPage
+        // SQL query to select data
+        $sql = "SELECT COUNT(DISTINCT o_id) AS total_count FROM closed_orders";
+        $result = $this->query($sql);
+        $row = mysqli_fetch_assoc($result);
+        $totalCount = (int)$row['total_count'];
+        return $totalCount;
+        // $totalItems = mysqli_num_rows($result);
+    }
+
+    public function partialClosedOrderIdListPage($like_o_id, $page, $itemsPerPage) { // partialConfirmOrderIdListPage
+        // SQL query to select data
+        $offset = ($page - 1) * $itemsPerPage ;
+        $sql = "SELECT 
+                    *
+                FROM 
+                    closed_orders
+                WHERE
+                    o_id LIKE '%" . $like_o_id . "%'" .     
+                " ORDER BY 
+                    d_date DESC
+                LIMIT " 
+                    .$itemsPerPage .
+                " OFFSET "
+                    . $offset; 
+         
+        $result = $this->query($sql);
+
+        $closedOrderList['order'] = [];
+        if ($result) {
+            // Assuming $result is an associative array of rows
+            foreach ($result as $row) {
+                // Check if the product already exists in the array
+                if (isset($row['o_id'])) {
+                    // Store product name and price
+                    $closedOrderList['order'][] = [
+                        'o_id' => $row['o_id'],
+                        'o_name' => $row['o_name'],
+                        'o_phone' => $row['o_phone'],
+                        'o_address' => $row['o_address'],
+                        'o_notes' => $row['o_notes'],
+                        'o_date' => $row['o_date'],
+                        'd_date' => $row['d_date'],
+                        'o_items' => json_decode($row['o_items'], true)
+                    ];
+                }  
+            }
+        }
+        // echo '<pre>';
+        // print_r($closedOrderList);
+        // echo '<pre/>';
+        // exit();
+        return $closedOrderList; 
+    } 
+
+    public function countForPartialClosedOrderIdListPage($like_o_id) { //countForPartialConfirmOrderIdListPage
+        // SQL query to select data 
+        $sql = "SELECT COUNT(DISTINCT o_id) AS total_count FROM closed_orders WHERE o_id LIKE '%" . $like_o_id . "%'";
         $result = $this->query($sql);
         $row = mysqli_fetch_assoc($result);
         $totalCount = (int)$row['total_count'];
