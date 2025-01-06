@@ -20,11 +20,12 @@ require 'Database.php';
         if (!empty($search_name) && !empty($search_unit) ) {
 
             $user_ip = $_SERVER['REMOTE_ADDR'];
+            $db = new Database();
             if($o_id == 0){
                 $o_id =  uniqid();
+                $db->deliveryDetails($o_id, '', '', '', '');
             }
 
-            $db = new Database();
             $new_o_id =  $db->addOderItem($o_id, $o_date ,$user_ip, $search_pid, $search_unit, $search_size, $search_comment);
             $db->close();
 
