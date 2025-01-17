@@ -36,9 +36,9 @@ imageInput_<?php echo $x; ?>.addEventListener('change', function(event) {
 
             // Check for minimum dimensions
             if (width < 600 || height < 800) {
-                alert("Image dimensions must be at least 800x800 pixels.");
-            }else if (file.size < 100 * 1024) {
-                alert("File size must be greater than 100KB.");
+                alert("Image dimensions must be at least 600x800 pixels.");
+            }else if (file.size > 150 * 1024) {
+                alert("File size must be less than 150KB.");
             }else {
                 const reader = new FileReader();
                 reader.onload = function(e) {

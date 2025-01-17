@@ -12,7 +12,8 @@ $img = new Image();
 
 // upload the image to 'assets/img/prod/' folder    
 $target_dir = $_SERVER['DOCUMENT_ROOT'] . $target_project . $prod_img_folder;
-
+console.info('' . $target_dir . '');
+console.log(''. $target_dir . '');
 clearstatcache(); // Clear the cache
 
 // Check if the directory is writable

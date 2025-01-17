@@ -151,11 +151,11 @@ if (isset($_POST['CategoryName']) && $_POST['CategoryName'] != null){
                 const height = img.naturalHeight;
 
                 // Check for minimum dimensions
-                if (width < 800 || height < 800) {
-                    alert("Image dimensions must be at least 800x800 pixels.");
+                if (width < 400 || height < 400) {
+                    alert("Image dimensions must be at least 400x400 pixels.");
                     fileInput.value = ''; // Clear the input
                     preview.innerHTML = ''; // Clear the preview
-                }else if (file.size < 100 * 1024) {
+                }else if (file.size > 150 * 1024) {
                     alert("File size must be greater than 100KB.");
                     fileInput.value = ''; // Clear the input
                     preview.innerHTML = ''; // Clear the preview

@@ -4,19 +4,19 @@
             <div class="row">
 
                 <div class="col-md-4 pt-5">
-                    <h2 class="h2 text-success border-bottom pb-3 border-light logo">Zay Shop</h2>
+                    <h2 class="h2 text-success border-bottom pb-3 border-light logo">DB Local Shop</h2>
                     <ul class="list-unstyled text-light footer-link-list">
                         <li>
                             <i class="fas fa-map-marker-alt fa-fw"></i>
-                            123 Consectetur at ligula 10660
+                            South Kafrul, Kafrul, Dhaka - 1206
                         </li>
                         <li>
                             <i class="fa fa-phone fa-fw"></i>
-                            <a class="text-decoration-none" href="tel:010-020-0340">010-020-0340</a>
+                            <a class="text-decoration-none" href="tel:+8801517107806">+880 1517107806</a>
                         </li>
                         <li>
                             <i class="fa fa-envelope fa-fw"></i>
-                            <a class="text-decoration-none" href="mailto:info@company.com">info@company.com</a>
+                            <a class="text-decoration-none" href="mailto:info@bdlocalshop.com">info@company.com</a>
                         </li>
                     </ul>
                 </div>
@@ -24,9 +24,9 @@
                 <div class="col-md-4 pt-5">
                     <h2 class="h2 text-light border-bottom pb-3 border-light">Products</h2>
                     <ul class="list-unstyled text-light footer-link-list">
-                        <li><a class="text-decoration-none" href="#">Luxury</a></li>
-                        <li><a class="text-decoration-none" href="#">Sport Wear</a></li>
-                        <li><a class="text-decoration-none" href="#">Men's Shoes</a></li>
+                        <li><a class="text-decoration-none" href="#">খেলনা Toys</a></li>
+                        <li><a class="text-decoration-none" href="#">শাড়ী কাপড় Shari kapor</a></li>
+                        <li><a class="text-decoration-none" href="#">গয়না Jwelery</a></li>
                         <li><a class="text-decoration-none" href="#">Women's Shoes</a></li>
                         <li><a class="text-decoration-none" href="#">Popular Dress</a></li>
                         <li><a class="text-decoration-none" href="#">Gym Accessories</a></li>
@@ -82,7 +82,7 @@
                 <div class="row pt-2">
                     <div class="col-12">
                         <p class="text-left text-light">
-                            Copyright &copy; 2021 Company Name 
+                            Copyright &copy; 2025 Bd local shop 
                             | Designed by <a rel="sponsored" href="https://templatemo.com" target="_blank">TemplateMo</a>
                         </p>
                     </div>
